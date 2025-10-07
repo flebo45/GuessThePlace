@@ -1,0 +1,36 @@
+-----------------------------------------------------
+Informazioni e Linee Guida per "GuessThePlace"
+-----------------------------------------------------
+
+1. Tecnologie e Organizzazione Software
+|---->Tecnologie:
+	- Frontend: JavaScript puro **solo ES6**
+	- Backend: php (capire se usare Laravel, poiché dà tanti vantaggi)
+
+|---->Architetture:
+	- Frontend: Clean architecture + Component-based UI
+		Clean Architecture migliore la testabilità, la modularità e la scalabilità
+		Component-based UI poiché è quella adottata dai moderni framework e si implementa facilmente con la Clean architecture
+	- Backend: Clean Architecture + REST API endpoints
+		Clean Architecture per avere simmetria con frontend
+
+|---->Tipologia:
+	-SPA (Single Page Application): 1 solo html, Js aggiorna dinamicamente quell'html. Questo comporta routing dell'url fittizio ma funzionante
+
+2. API Esterne
+|---->Flickr: immagini con geolocalizzazione (purtoppo tocca pagarlo)
+|---->OpenStreetMap: mappa
+
+3. Casi D'Uso (più o meno)
+|---->Login
+|---->Gioca una partita
+|---->Cerca un utente
+|---->Segui un utente
+|---->Visualizzazione Scoreboard (globale e amici)
+
+4. Logica Gioco
+Ogni partita è composta da 5 round. In ogni round viene scelta casualmente una foto da far vedere all'utente. L'utente sceglie su una mappa il punto che pensa essere dove sia localizzata la foto. Il sistema computa la distanza dalla soluzione e calcola il punteggio guadagnato dal round. Alla fine della partita i punteggi verranno sommatie verrano mostrati all'utente, che viene renderizzato alla leaderboard page. Qui ci sono varie leaderboard (da definire) (globale, amici)(giornaliera, settimanale...). L'utente ha bisogno anche di una barra di ricerca per cercare il nome dell'amico e seguirlo.
+
+5. Idee
+|---->Leaderboard in base a categoria (globale, amici), in base a tempo (giornaliera, settimanle, mensile)
+|---->Pagina Utente con nome, tasto per seguire o smettere di seguire, e grafico che fa vedere l'andamento dei punteggi durante la settimana
