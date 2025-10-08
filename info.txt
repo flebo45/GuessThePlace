@@ -4,21 +4,19 @@ Informazioni e Linee Guida per "GuessThePlace"
 
 1. Tecnologie e Organizzazione Software
 |---->Tecnologie:
-	- Frontend: JavaScript puro **solo ES6**
-	- Backend: php (capire se usare Laravel, poiché dà tanti vantaggi)
+	- Frontend: JavaScript puro **solo ES6**, e qualche libreria(firebase, e qualcuna per effettuare routing)
+	- Backend: Firebase (non dobbiamo fare niente in php, solo da dashboard)
 
 |---->Architetture:
 	- Frontend: Clean architecture + Component-based UI
 		Clean Architecture migliore la testabilità, la modularità e la scalabilità
 		Component-based UI poiché è quella adottata dai moderni framework e si implementa facilmente con la Clean architecture
-	- Backend: Clean Architecture + REST API endpoints
-		Clean Architecture per avere simmetria con frontend
 
 |---->Tipologia:
 	-SPA (Single Page Application): 1 solo html, Js aggiorna dinamicamente quell'html. Questo comporta routing dell'url fittizio ma funzionante
 
 2. API Esterne
-|---->Flickr: immagini con geolocalizzazione (purtoppo tocca pagarlo)
+|---->Mapillary: foto in base alle coordinate, già testato e funzionante, da condividere la api key
 |---->OpenStreetMap: mappa
 
 3. Casi D'Uso (più o meno)
