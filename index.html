@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GeoGame MVP</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <div id="ui">
+    <button id="new-round">Nuovo round</button>
+    <button id="lock-guess" disabled>Conferma guess</button>
+    <button id="show-stats">Stats</button>
+    <button id="reset-game">Reset</button>
+    <div id="info"></div>
+    <div id="stats" style="margin-top:8px"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
