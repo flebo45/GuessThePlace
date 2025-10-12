@@ -1,31 +1,58 @@
 'use strict';
 
 export class User {
-    constructor(id, username, friends = []) {
+    constructor(id, email = null, username = null, following = []) {
         this.id = id;
+        this.email = email;
         this.username = username;
-        this.friends = friends; // Array of User IDs
+        this.following = new Set(following); // Array of User IDs
+    }
+
+    static fromFirebaseUser(firebaseUser, extraData = {}) {
+        if (!firebaseUser) return null;
+        return new User(
+            firebaseUser.uid,
+            firebaseUser.email,
+            extraData.username || null,
+            extraData.following || []
+        );
     }
 
     getId() {
         return this.id;
     }
 
+    getEmail() {
+        return this.email;
+    }
+
     getUsername() {
         return this.username;
     }
 
-    getFriends() {
-        return this.friends;
+
+    getFollowing() {
+        return this.following;
     }
 
-    addFriend(friendId) {
-        if (!this.friends.includes(friendId)) {
-            this.friends.push(friendId);
-        }
+    follow(userId) {
+        this.following.add(userId);
     }
 
-    removeFriend(friendId) {
-        this.friends = this.friends.filter(id => id !== friendId);
+    unfollow(userId) {
+        this.following.delete(userId);
+    }
+
+    isFollowing(userId) {
+        return this.following.has(userId);
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            email: this.email,
+            username: this.username,
+            following: Array.from(this.following),
+        };
     }
 }
