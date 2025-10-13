@@ -67,7 +67,7 @@ export class AppState {
   }
 
   getTotalScore() {
-    return this.scores.reduce((acc, s) => acc + s.points, 0);
+    return this.scores.reduce((acc, val) => acc + (val || 0), 0);
   }
 
   // ---------- GLOBAL RESET ----------

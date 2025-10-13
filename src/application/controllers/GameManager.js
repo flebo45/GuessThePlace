@@ -10,7 +10,9 @@ export class GameManager {
 
   setTempGuess(latlng) {
     if (this.gameController.isGameOver()) return;
-    this.tempGuess = latlng;
+    
+    const roundNumber = this.gameController.getCurrentRound();
+    this.tempGuess = new Guess(latlng.lat, latlng.lng, roundNumber);
     this.uiController.setConfirmEnabled(true);
   }
 

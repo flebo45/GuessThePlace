@@ -4,7 +4,7 @@ import { calculateDistance } from '../../domain/services/DistanceCalculator.js';
 import { calculateScore } from '../../domain/services/ScoringService.js';
 import { Photo } from '../../domain/entities/Photo.js';
 import { Guess } from '../../domain/entities/Guess.js';
-import { Score } from '../../domain/entities/Score.js';
+//import { Score } from '../../domain/entities/Score.js';
 
 
 export class GameController {
@@ -47,14 +47,14 @@ export class GameController {
 
     const currentPhoto = this.getCurrentPhoto();
     const distance = calculateDistance(guess, currentPhoto);
-    const points = calculateScore(distance);
+    const score = calculateScore(distance);
 
-    const score = new Score(points, distance, roundNumber);
+    //const score = new Score(points, distance, roundNumber);
 
     this.state.recordGuess(guess);
     this.state.recordScore(score);
 
-    return { score: points, distance };
+    return { score, distance };
   }
 
   nextRound() {
