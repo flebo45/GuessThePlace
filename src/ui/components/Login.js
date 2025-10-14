@@ -30,7 +30,6 @@ export function Login(container) {
                 email: fd.get("email"),
                 password: fd.get("password")
             });
-            appState.setUser(user);
             messageDiv.textContent = "Login successful!";
             updateSessionInfo();
         } catch (error) {
@@ -40,9 +39,10 @@ export function Login(container) {
     });
 
     const updateSessionInfo = () => {
+        //TODO Hide login and register
         if (appState.user) {
             sessionDiv.innerHTML = `
-                <p>Logged in as: ${appState.user.email}</p>
+                <p>Logged in as: ${appState.user.getUsername()}</p>
                 <button id="logoutButton">Logout</button>
             `;
             const logoutButton = sessionDiv.querySelector("#logoutButton");

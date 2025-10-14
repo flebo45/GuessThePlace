@@ -5,5 +5,7 @@ export async function LoginUserUseCase({ email, password }) {
   if (!email || !password) throw new Error("Email and password required");
   const user = await UserRepository.login({ email, password });
   appState.setUser(user);
+  //Add session persistance
+  
   return user;
 }

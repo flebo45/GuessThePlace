@@ -10,10 +10,11 @@ export class User {
 
     static fromFirebaseUser(firebaseUser, extraData = {}) {
         if (!firebaseUser) return null;
+        console.log(firebaseUser)
         return new User(
             firebaseUser.uid,
             firebaseUser.email,
-            extraData.username || null,
+            firebaseUser.displayName,
             extraData.following || []
         );
     }

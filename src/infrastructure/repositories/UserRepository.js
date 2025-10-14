@@ -27,9 +27,10 @@ export const UserRepository = {
 
         const userDocRef = doc(db, "users", user.uid);
         await setDoc(userDocRef, {
-            email,
-            username: username || null,
-            following: []
+            email: email,
+            username: username,
+            following: [],
+            createdAt: new Date(),
         });
 
         return User.fromFirebaseUser(user);
@@ -37,6 +38,7 @@ export const UserRepository = {
 
     async login({email, password}) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        //TODO add extra user data fromm firebase database
         return User.fromFirebaseUser(userCredential.user);
     },
     

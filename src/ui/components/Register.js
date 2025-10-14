@@ -30,7 +30,6 @@ export function Register(container) {
                 password: fd.get("password"),
                 username: fd.get("username")
             });
-            appState.setUser(user);
             messageDiv.textContent = "Registration successful!";
         } catch (error) {
             console.error("Registration error:", error);
