@@ -4,7 +4,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../infrastructure/firebase/firebase-config.js";
 import { UserRepository } from "../../infrastructure/repositories/UserRepository.js";
 
-export function setupAuthObserver() {
+export async function setupAuthObserver() {
+
+    await auth.authStateReady();
+
     onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
             const profile = await UserRepository.getUserById(firebaseUser.uid);

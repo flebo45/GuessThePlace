@@ -2,6 +2,7 @@ export class AppState {
   constructor() {
     this.user = null;
     this.isAuthenticated = false;
+    this.listeners = [];
     this.resetGame();
   }
 
@@ -9,16 +10,26 @@ export class AppState {
 
   setUser(user) {
     this.user = user;
-    this.isAuthenticated = !!user;
+    this.isAuthenticated = true;
+    this.notify();
   }
 
   clearUser() {
     this.user = null;
     this.isAuthenticated = false;
+    this.notify();
   }
 
   getUser() {
     return this.user;
+  }
+
+  notify() {
+    this.listeners.forEach(callback => callback(this));
+  }
+
+  subscribe(callback) {
+    this.listeners.push(callback);
   }
 
   // ---------- GAME MANAGEMENT ----------

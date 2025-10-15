@@ -5,18 +5,29 @@
 import { setupAuthObserver } from './src/application/controllers/AuthController.js';
 import { appState } from './src/application/state/AppState.js';
 import { LogView } from './src/ui/views/LogView.js';
-import { AutoLoginUserUseCase } from './src/application/usecases/AutoLoginUser.js';
+import { gameView } from './src/ui/views/GameView.js';
 
 const root = document.getElementById("app");
-root.innerHTML = "<p>Loading...</p>";
-
-AutoLoginUserUseCase();
 
 // Initialize authentication observer
 setupAuthObserver();
 
-LogView(root);
+function render(state) {
+  root.innerHTML = '';
+  if (!state.isAuthenticated) {
+    //root.innerHTML = "<p>Loading...</p>";
+    return;
+  }
 
+  if (state.user && state.isAuthenticated) {
+    gameView(root);
+  } else {
+    LogView(root);
+  }
+}
+
+render(appState);
+appState.subscribe(render);
 
 /*
 const gameController = new GameController();

@@ -3,5 +3,5 @@ import { appState } from "../state/AppState.js";
 
 export async function LogoutUseCase() {
   await UserRepository.logout();
-  appStateclearUser();
+  appState.clearUser();
 }
