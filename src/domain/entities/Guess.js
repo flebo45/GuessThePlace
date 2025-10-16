@@ -1,21 +1,9 @@
 'use strict';
 
 export class Guess {
-    constructor(guessedLatitude, guessedLongitude, roundNumber) {
-        this.guessedLatitude = guessedLatitude;
-        this.guessedLongitude = guessedLongitude;
-        this.roundNumber = roundNumber;
-    }
-
-    getGuessedLatitude() {
-        return this.guessedLatitude;
-    }
-
-    getGuessedLongitude() {
-        return this.guessedLongitude;
-    }
-
-    getRoundNumber() {
-        return this.roundNumber;
-    }
+  constructor(lat, lng, roundNumber) {
+    this.lat = lat;
+    this.lng = lng;
+    this.roundNumber = roundNumber;
+  }
 }
