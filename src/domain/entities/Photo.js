@@ -3,8 +3,8 @@
 export class Photo {
     constructor(url, latitude = null, longitude = null) {
         this.url = url;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.lat = latitude;
+        this.lng = longitude;
     }
 
     getUrl() {
