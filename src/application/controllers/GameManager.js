@@ -1,4 +1,5 @@
 // src/application/controllers/GameManager.js
+import { Guess } from '../../domain/entities/Guess.js';
 
 export class GameManager {
   constructor(gameController, gameMapController, uiController) {

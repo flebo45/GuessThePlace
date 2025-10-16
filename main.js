@@ -1,7 +1,7 @@
-//import { GameController } from './src/application/controllers/GameController.js';
-//import { GameMapController } from './src/application/controllers/GameMapController.js';
-//import { UIController } from './src/application/controllers/UIController.js';
-//import { GameManager } from './src/application/controllers/GameManager.js';
+import { GameController } from './src/application/controllers/GameController.js';
+import { GameMapController } from './src/application/controllers/GameMapController.js';
+import { UIController } from './src/application/controllers/UIController.js';
+import { GameManager } from './src/application/controllers/GameManager.js';
 import { setupAuthObserver } from './src/application/controllers/AuthController.js';
 import { appState } from './src/application/state/AppState.js';
 import { LogView } from './src/ui/views/LogView.js';
@@ -39,7 +39,7 @@ function render(state) {
 
 init();
 
-/*
+
 const gameController = new GameController();
 const gameMapController = new GameMapController('map');
 const uiController = new UIController({
@@ -59,4 +59,3 @@ const gameManager = new GameManager(gameController, gameMapController, uiControl
 gameMapController.onMapClick(latlng => {
   gameManager.setTempGuess(latlng);
 });
-*/

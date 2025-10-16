@@ -1,15 +1,10 @@
 'use strict';
 
 export class Photo {
-    constructor(id, url, latitude = null, longitude = null) {
-        this.id = id;
+    constructor(url, latitude = null, longitude = null) {
         this.url = url;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    getId() {
-        return this.id;
     }
 
     getUrl() {
