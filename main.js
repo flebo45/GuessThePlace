@@ -10,24 +10,34 @@ import { gameView } from './src/ui/views/GameView.js';
 const root = document.getElementById("app");
 
 // Initialize authentication observer
-setupAuthObserver();
+async function init() {
+  // Show loading immediately
+  //root.innerHTML = '<p>Loading...</p>';
+
+  // start auth observer (it will set appState appropriately)
+  await setupAuthObserver(); // optional await: safe because setup handles waiting internally
+
+  // subscribe to state changes and render
+  appState.subscribe(render);
+  render(appState);
+}
 
 function render(state) {
-  root.innerHTML = '';
-  if (!state.isAuthenticated) {
-    //root.innerHTML = "<p>Loading...</p>";
+  root.innerHTML = ""; // clear DOM
+
+  if (!state.authReady) {
+    //root.innerHTML = '<p>Loading...</p>';
     return;
   }
 
-  if (state.user && state.isAuthenticated) {
+  if (state.isAuthenticated && state.user) {
     gameView(root);
   } else {
     LogView(root);
   }
 }
 
-render(appState);
-appState.subscribe(render);
+init();
 
 /*
 const gameController = new GameController();

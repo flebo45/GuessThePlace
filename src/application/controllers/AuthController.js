@@ -16,5 +16,9 @@ export async function setupAuthObserver() {
         } else {
             appState.clearUser();
         }
+
+        if (!appState.authReady) {
+            appState.setAuthReady();
+        }
     });
 }   

@@ -2,6 +2,7 @@ export class AppState {
   constructor() {
     this.user = null;
     this.isAuthenticated = false;
+    this.authReady = false;
     this.listeners = [];
     this.resetGame();
   }
@@ -11,15 +12,22 @@ export class AppState {
   setUser(user) {
     this.user = user;
     this.isAuthenticated = true;
+    this.authReady = true;
     this.notify();
   }
 
   clearUser() {
     this.user = null;
     this.isAuthenticated = false;
+    this.authReady = true;
     this.notify();
   }
 
+  setAuthReady() {
+    this.authReady = true;
+    this.notify();
+  }
+  
   getUser() {
     return this.user;
   }
