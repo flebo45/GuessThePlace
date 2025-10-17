@@ -1,5 +1,7 @@
 // src/application/controllers/GameManager.js
 import { Guess } from '../../domain/entities/Guess.js';
+import { SaveGame } from '../usecases/SaveGame.js';
+import { appState } from '../state/AppState.js';
 
 export class GameManager {
   constructor(gameController, gameMapController, uiView) {
@@ -40,8 +42,21 @@ export class GameManager {
     this.tempGuess = null;
   }
 
-  nextRound() {
+  async nextRound() {
     if (!this.gameController.nextRound()) {
+      const totalScore = this.gameController.getTotalScore();
+      const user = appState.user;
+
+      if (user) {
+        try {
+          await SaveGame.execute(user.id, totalScore);
+        } catch (error) {
+          console.error('Errore nel salvataggio della partita:', error);
+        }
+      } else {
+        console.warn('Utente non autenticato; la partita non verrà salvata.');
+      }
+
       // Delegate presentation to the view; the view is responsible for how
       // the game-over is shown (alert/modal/overlay).
       this.uiView.showGameOver(this.gameController.getTotalScore());
