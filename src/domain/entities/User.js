@@ -19,6 +19,17 @@ export class User {
         );
     }
 
+    static fromFirebaseDb(docSnap) {
+        if (!docSnap.exists()) return null;
+        const data = docSnap.data();
+        return new User(
+            data.id,
+            data.email,
+            data.username,
+            data.following || []
+        );
+    }
+
     getId() {
         return this.id;
     }

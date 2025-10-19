@@ -9,26 +9,33 @@ import {
 import {
   doc,
   setDoc,
+  getDocs,
+  query,
+  where,
   getDoc,
   updateDoc,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  collection,
+  orderBy,
+  startAt,
+  endAt
 } from "firebase/firestore";
 
 import { auth, db } from "../firebase/firebase-config.js";
 import { User } from "../../domain/entities/User.js";
+
+const usersCollection = collection(db, "users");
 
 export const UserRepository = {
     async register({email, password, username}) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        if (username) await updateProfile(user, { displayName: username });
-
         const userDocRef = doc(db, "users", user.uid);
         await setDoc(userDocRef, {
             email: email,
-            username: username,
+            username: username.toLowerCase(),
             following: [],
             createdAt: new Date(),
         });
@@ -52,6 +59,47 @@ export const UserRepository = {
         if (!snapshot.exists()) return null;
         const data = snapshot.data();
         return new User(userId, data.email || null, data.username || null, data.following || []);
+    },
+
+    async getUserFromUsername(username) {
+        if (!username) return null;
+
+        try {
+            const q = query(usersCollection, where("username", "==", username), orderBy("username"));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) return null;
+
+            return snapshot.docs.map((docSnap) => User.fromFirebaseUser(docSnap));;
+        } catch (error) {
+            console.error("Error fetching user by username: ", error);
+            throw error;
+        }
+    },
+
+    async findByUsernamePrefix(prefix, limit = 10) {
+        if (!prefix) return [];
+
+        try {
+            const prefixLc = prefix.toLowerCase();
+
+            const startValue = prefixLc;
+            const endValue = prefixLc + '\uf8ff';
+
+            const q = query(
+                usersCollection,
+                orderBy("username"),
+                startAt(startValue),
+                endAt(endValue)
+            );
+
+            const snapshot = await getDocs(q);
+            const users = snapshot.docs.slice(0, limit).map((docSnap) => User.fromFirebaseDb(docSnap));
+
+            return users;
+        } catch (error) {
+            console.error("Error searching users by prefix: ", error);
+            throw error;
+        }
     },
 
     async followUser(currentUserId, targetUserId) {
