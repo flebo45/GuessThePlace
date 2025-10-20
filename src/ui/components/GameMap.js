@@ -1,7 +1,10 @@
 export class GameMap {
-  constructor(mapContainerId, onMapClick) {
-    this.onMapClick = onMapClick;
-    this.map = L.map(mapContainerId, {
+  constructor(containerElement) {
+    if (!(containerElement instanceof HTMLElement)) {
+      throw new Error("GameMap expects a DOM element, not an ID string");
+    }
+
+    this.map = L.map(containerElement, {
       worldCopyJump: false,
       maxBounds: [
         [-85, -180],
@@ -9,21 +12,24 @@ export class GameMap {
       ],
       maxBoundsViscosity: 1.0,
       minZoom: 2,
-      maxZoom: 5
+      maxZoom: 5,
     }).setView([20, 0], 2);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
-      bounds: [[-85, -180], [85, 180]],
-      attribution: '© OpenStreetMap contributors',
-      noWrap: true
+      bounds: [
+        [-85, -180],
+        [85, 180]
+      ],
+      attribution: "© OpenStreetMap contributors",
+      noWrap: true,
     }).addTo(this.map);
 
     this.guessMarker = null;
     this.solutionMarker = null;
     this.line = null;
 
-     this.map.on('click', (e) => {
+    this.map.on("click", (e) => {
       this.setGuessMarker(e.latlng);
       if (this.onMapClickCallback) {
         this.onMapClickCallback(e.latlng);

@@ -1,8 +1,8 @@
 // src/ui/components/PhotoViewer.js
 
 export class PhotoViewer {
-  constructor(containerId) {
-    this.container = document.getElementById(containerId);
+  constructor(container) {
+    this.container = container;
   }
 
   setPhoto(url) {

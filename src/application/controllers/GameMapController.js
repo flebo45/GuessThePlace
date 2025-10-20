@@ -1,10 +1,11 @@
-// src/application/controllers/GameMapController.js
-
 import { GameMap } from '../../ui/components/GameMap.js';
 
 export class GameMapController {
   constructor(mapContainerId) {
-    this.gameMap = new GameMap(mapContainerId);
+    this.mapContainerId = mapContainerId;
+    const container = document.getElementById(mapContainerId);
+    if (!container) throw new Error("Map container not found");
+    this.gameMap = new GameMap(container);
   }
 
   onMapClick(callback) {
@@ -15,15 +16,18 @@ export class GameMapController {
     this.gameMap.reset();
   }
 
-  /* setGuessPosition(latlng) {
-    this.gameMap.setGuessMarker(latlng);
-  } */
-
-  setSolutionPosition(latlng) {
+  showSolution(latlng) {
     this.gameMap.showSolutionMarker(latlng);
   }
 
   showLineBetween() {
     this.gameMap.showLineBetweenMarkers();
+  }
+
+  invalidateSize() {
+    // this.gameMap è la nostra classe, this.gameMap.map è l'oggetto Leaflet
+    if (this.gameMap && this.gameMap.map) {
+      this.gameMap.map.invalidateSize();
+    }
   }
 }

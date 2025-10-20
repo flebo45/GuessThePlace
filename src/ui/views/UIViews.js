@@ -1,57 +1,90 @@
-// src/ui/views/UIView.js
-
-import { PhotoViewer } from '../components/PhotoViewer.js';
-import { ControlsView } from '../components/ControlsView.js';
-import { ScoreboardView } from '../components/ScoreboardView.js';
-
 export class UIView {
-  constructor({ photoContainerId, confirmBtnId, nextBtnId, newGameBtnId, scoreListId, onConfirm, onNextRound, onNewGame }) {
-    // Keep PhotoViewer as-is
-    this.photoViewer = new PhotoViewer(photoContainerId);
+  constructor(root) {
+    this.root = root;
+  
+    this.container = null;
+    this.mapContainer = null;
+    this.photoElement = null;
+    this.confirmButton = null;
+    this.nextButton = null;
+    this.statusElement = null;
 
-    // Delegate controls and scoreboard responsibilities to smaller components
-    this.controls = new ControlsView({ confirmBtnId, nextBtnId, newGameBtnId, onConfirm, onNextRound, onNewGame });
-    this.scoreboard = new ScoreboardView({ scoreListId });
-    this.statusEl = typeof arguments[0].statusId === 'string' ? document.getElementById(arguments[0].statusId) : null;
+    this.handlers = {};
   }
 
-  reset() {
-    this.photoViewer.setPhoto('');
-    this.controls.reset();
-    this.scoreboard.clear();
-    this.clearStatus();
+  renderGameUI() {
+    this.root.innerHTML = `
+      <div class="game-ui-container">
+        <div id="status" class="game-status"></div>
+        <div class="photo-container">
+          <img id="photoElement" alt="Guess the location" class="game-photo" />
+        </div>
+        
+        <div class="controls">
+          <button id="confirmGuessBtn" disabled>Confirm Guess</button>
+          <button id="nextRoundBtn" style="display:none;">Next Round</button>
+        </div>  
+      </div>
+      <div id="map"></div>
+    `;
+
+    this.container = this.root.querySelector(".game-ui-container");
+    this.mapContainer = this.root.querySelector("#map");
+    this.photoElement = this.root.querySelector("#photoElement");
+    this.confirmButton = this.root.querySelector("#confirmGuessBtn");
+    this.nextButton = this.root.querySelector("#nextRoundBtn");
+    this.statusElement = this.root.querySelector("#status");
+
+    this.confirmButton.addEventListener("click", () => {
+      this.handlers.onConfirmGuess?.();
+    });
+    this.nextButton.addEventListener("click", () => {
+      this.handlers.onNextRound?.();
+    });
   }
 
-  setStatus(text) {
-    if (this.statusEl) this.statusEl.textContent = text;
+  /** Allow controllers to attach logic */
+  on(event, callback) {
+    this.handlers[event] = callback;
+  }
+
+  // --- Presentation updates ---
+  setPhoto(url) {
+    if (this.photoElement) this.photoElement.src = url;
+  }
+
+  setStatus(message) {
+    if (this.statusElement) this.statusElement.textContent = message;
   }
 
   clearStatus() {
-    if (this.statusEl) this.statusEl.textContent = '';
-  }
-
-  setPhoto(url) {
-    this.photoViewer.setPhoto(url);
+    if (this.statusElement) this.statusElement.textContent = '';
   }
 
   setConfirmEnabled(enabled) {
-    this.controls.setConfirmEnabled(enabled);
+    if (this.confirmButton) this.confirmButton.disabled = !enabled;
   }
 
-  showNextButton(show) {
-    this.controls.showNextButton(show);
+  showNextButton(visible) {
+    if (this.nextButton)
+      this.nextButton.style.display = visible ? "inline-block" : "none";
   }
 
-  addRoundScore(roundNum, score, distance) {
-    this.scoreboard.addRoundScore(roundNum, score, distance);
+  addRoundScore(round, score, distance) {
+    this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
 
-  clearScoreList() {
-    this.scoreboard.clear();
-  }
-
-  // View-specific method: display end-of-game UI. Keep presentation here.
   showGameOver(totalScore) {
-    alert(`Gioco finito! Punteggio totale: ${totalScore}`);
+    this.setStatus(`Game over! Total score: ${totalScore}`);
+  }
+
+  reset() {
+    if (this.photoElement) this.photoElement.src = "";
+    this.clearStatus();
+  }
+
+  /** Provide a reference to the map container so controller can init GameMapController */
+  getMapContainerId() {
+    return "map";
   }
 }

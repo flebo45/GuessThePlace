@@ -1,8 +1,7 @@
-import { appState } from "../../application/state/AppState.js";
 import { Login } from "../components/Login.js";
 import { Register } from "../components/Register.js";
 
-export function LogView(container) {
+export function logView(container) {
     container.innerHTML = `
     <div>
         <button id="btnShowLogin">Login</button>

@@ -1,45 +1,35 @@
-// src/application/controllers/GameController.js
 import { fetchPhotoEntities } from '../../infrastructure/apis/PhotoAPI.js';
-import { AppState } from '../state/AppState.js';
 import { calculateDistance } from '../../domain/services/DistanceCalculator.js';
 import { calculateScore } from '../../domain/services/ScoringService.js';
-import { Photo } from '../../domain/entities/Photo.js';
 import { Guess } from '../../domain/entities/Guess.js';
-//import { Score } from '../../domain/entities/Score.js';
-
-
+import { appState } from '../state/AppState.js';
 
 export class GameController {
   constructor() {
-    this.state = new AppState();
+    this.state = appState;
   }
 
-  async startNewGame() {
-    const photos = await fetchPhotoEntities(5);
+  async startNewGame(count = 5) {
+    const photos = await fetchPhotoEntities(count);
     this.state.startNewGame(photos);
   }
 
   getCurrentPhoto() {
-    return this.state.getCurrentPhoto();
+    return this.state.getCurrentPhoto() ? this.state.getCurrentPhoto() : null ;
   }
 
   isGameOver() {
     return this.state.isGameOver();
   }
 
-  confirmGuess(guess) {
-    // Strict domain contract: confirmGuess expects a domain `Guess` entity.
-    if (!(guess instanceof Guess)) {
-      throw new TypeError('GameController.confirmGuess expects a Guess instance');
-    }
+  confirmGuess({lat, lng}) {
+    const guess = new Guess(lat, lng, this.state.getCurrentRoundNumber())
 
-    const currentPhoto = this.getCurrentPhoto();
+    const currentPhoto = this.state.getCurrentPhoto();
     const distance = calculateDistance(guess, currentPhoto);
     const score = calculateScore(distance);
 
     this.state.recordGuess(guess);
-    // this.state.recordScore(score);
-    // store score and distance together in the Round entity
     this.state.recordScore(score, distance);
 
     return { score, distance };

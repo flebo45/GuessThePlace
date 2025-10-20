@@ -5,7 +5,7 @@ import { GameManager } from './src/application/controllers/GameManager.js';
 
 import { setupAuthObserver } from './src/application/controllers/AuthController.js';
 import { appState } from './src/application/state/AppState.js';
-import { LogView } from './src/ui/views/LogView.js';
+import { logView } from './src/ui/views/LogView.js';
 import { gameView } from './src/ui/views/GameView.js';
 
 const root = document.getElementById("app");
@@ -34,33 +34,11 @@ function render(state) {
   if (state.isAuthenticated && state.user) {
     gameView(root);
   } else {
-    LogView(root);
+    logView(root);
   }
 }
 
 init();
-
-
-const gameController = new GameController();
-const gameMapController = new GameMapController('map');
-const uiView = new UIView({
-  photoContainerId: 'photo-container',
-  confirmBtnId: 'confirm-btn',
-  nextBtnId: 'next-round-btn',
-  newGameBtnId: 'new-game-btn',
-  scoreListId: 'score-list',
-  statusId: 'status',
-  onConfirm: () => gameManager.confirmGuess(),
-  onNextRound: () => gameManager.nextRound(),
-  onNewGame: () => gameManager.newGame()
-});
-
-const gameManager = new GameManager(gameController, gameMapController, uiView);
-
-
-gameMapController.onMapClick(latlng => {
-  gameManager.setTempGuess(latlng);
-});
 
 
 

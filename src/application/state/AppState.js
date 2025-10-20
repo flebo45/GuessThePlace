@@ -111,6 +111,10 @@ export class AppState {
     return null;
   }
 
+  getCurrentRoundNumber() {
+    return this.currentRound;
+  }
+
   // Access to Round entity if needed
   getCurrentRoundEntity() {
     const idx = this.currentRound - 1;

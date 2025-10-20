@@ -1,7 +1,7 @@
 // src/ui/components/ScoreboardView.js
 export class ScoreboardView {
-  constructor({ scoreListId }) {
-    this.scoreListEl = typeof scoreListId === 'string' ? document.getElementById(scoreListId) : scoreListId;
+  constructor(scoreList) {
+    this.scoreListEl = scoreList;
   }
 
   addRoundScore(roundNum, score, distance) {

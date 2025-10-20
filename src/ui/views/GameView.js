@@ -1,4 +1,9 @@
 import { Session } from "../components/Session";
+import { GameManager } from "../../application/controllers/GameManager.js";
+import { GameController } from "../../application/controllers/GameController.js";
+import { GameMapController } from "../../application/controllers/GameMapController.js";
+import { UIView } from "./UIViews.js";
+import { map } from "leaflet";
 
 export function gameView(root) {
     root.innerHTML = `
@@ -25,7 +30,8 @@ export function gameView(root) {
         </div>
 
         <div id="searchResults" class="menu-section search-results"></div>
-      </main>
+        <div id="gameContainer" class="hidden"></div>
+        </main>
     </div>
     `;
 
@@ -38,6 +44,34 @@ export function gameView(root) {
     const startGameButton = root.querySelector("#startGameButton");
     const leaderboardButton = root.querySelector("#leaderboardButton");
     const searchResultsDiv = root.querySelector("#searchResults");
+    const gameContainer = root.querySelector("#gameContainer");
+    
+
+    let debounceTimer;
+
+    searchInput.addEventListener("input", () => {
+      const prefix = searchInput.value.trim();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(async () => {
+        if (prefix.length < 3) {
+            searchResultsDiv.innerHTML = "";
+            return;
+        }
+      
+        try {
+            const { SearchUser } = await import("../../application/usecases/SearchUser.js");
+            const results = await SearchUser.byUsernamePrefix(prefix, 10);
+
+            searchResultsDiv.innerHTML = results.length
+              ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
+              : "<p>No users found.</p>";
+        } catch (error) {
+            console.error("Error during user search: ", error);
+            searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
+        }
+      }, 300); // Debounce delay of 300ms
+    });
+
 
     searchButton.addEventListener("click", async () => {
         const prefix = searchInput.value.trim();
@@ -57,16 +91,46 @@ export function gameView(root) {
                 return;
             }
 
-            searchResultsDiv.innerHTML = "<ul>" + results.map(user => `<li>${user.getUsername()}</li>`).join("") + "</ul>";
+            searchResultsDiv.innerHTML = results.length
+              ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
+              : "<p>No users found.</p>";
         } catch (error) {
             console.error("Error during user search: ", error);
             searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
         }
     });
 
-    startGameButton.addEventListener("click", () => {
-        alert("Starting new game...");
+    searchResultsDiv.addEventListener("click", (event) => {
+      const userItem = event.target.closest(".search-result-item");
+      if (userItem) {
+          console.log(`User selected: ${userItem.textContent}`);
+      }
     });
+
+    startGameButton.addEventListener("click", () => {
+      gameContainer.classList.remove("hidden");
+      const uiView = new UIView(gameContainer);
+      uiView.renderGameUI();
+      const gameController = new GameController();
+      const mapController = new GameMapController(uiView.getMapContainerId());
+      
+      const gameManager = new GameManager({ 
+        gameController, 
+        gameMapController: mapController, 
+        uiView 
+      });
+
+      // Link Handler
+      uiView.on("onConfirmGuess", () => gameManager.confirmGuess());
+      uiView.on("onNextRound", () => gameManager.nextRound());
+      mapController.onMapClick((latlng) => gameManager.setTempGuess(latlng));
+
+      // Start the game
+      gameManager.startNewGame();
+      
+    });
+
+
     leaderboardButton.addEventListener("click", () => {
         alert("Showing leaderboard...");
     });
