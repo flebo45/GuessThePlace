@@ -93,6 +93,7 @@ export class UIView {
 
   showGameOver(totalScore) {
     this.setStatus(`Game over! Total score: ${totalScore}`);
+    if (this.nextButton) this.nextButton.disabled = true;
   }
 
   reset() {

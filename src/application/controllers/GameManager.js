@@ -103,7 +103,7 @@ export class GameManager {
     }
 
     this.uiView.showGameOver(totalScore);
-    this._resetAllUI();
+    //this._resetAllUI();
    /*  if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
     this.gameMapController.disableInteraction();
     } */
