@@ -17,12 +17,17 @@ export class UIView {
       <div class="game-ui-container">
         <div id="status" class="game-status"></div>
         <div class="photo-container">
-          <img id="photoElement" alt="Guess the location" class="game-photo" />
+          <img id="photoElement" alt="Guess the location" class="game-photo hidden" />
+        </div>
+        
+        <div class="scoreboard">
+          <h3>Round scores</h3>
+          <ul id="scoreList" class="score-list"></ul>
         </div>
         
         <div class="controls">
           <button id="confirmGuessBtn" disabled>Confirm Guess</button>
-          <button id="nextRoundBtn" style="display:none;">Next Round</button>
+          <button id="nextRoundBtn" disabled>Next Round</button>
         </div>  
       </div>
       <div id="map"></div>
@@ -33,6 +38,7 @@ export class UIView {
     this.photoElement = this.root.querySelector("#photoElement");
     this.confirmButton = this.root.querySelector("#confirmGuessBtn");
     this.nextButton = this.root.querySelector("#nextRoundBtn");
+    this.scoreListEl = this.root.querySelector("#scoreList");
     this.statusElement = this.root.querySelector("#status");
 
     this.confirmButton.addEventListener("click", () => {
@@ -48,9 +54,16 @@ export class UIView {
     this.handlers[event] = callback;
   }
 
-  // --- Presentation updates ---
+
   setPhoto(url) {
-    if (this.photoElement) this.photoElement.src = url;
+    if (!this.photoElement) return;
+    if (url) {
+      this.photoElement.src = url;
+      this.photoElement.classList.remove("hidden");
+    } else {
+      this.photoElement.classList.add("hidden");
+      this.photoElement.removeAttribute('src');
+    }
   }
 
   setStatus(message) {
@@ -65,13 +78,17 @@ export class UIView {
     if (this.confirmButton) this.confirmButton.disabled = !enabled;
   }
 
-  showNextButton(visible) {
-    if (this.nextButton)
-      this.nextButton.style.display = visible ? "inline-block" : "none";
+  showNextButton(enabled) {
+    if (this.nextButton) this.nextButton.disabled = !enabled;
   }
 
   addRoundScore(round, score, distance) {
-    this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
+    if (this.scoreListEl) {
+      const li = document.createElement('li');
+      li.textContent = `Round ${round}: ${score} points (${distance.toFixed(2)} km)`;
+      this.scoreListEl.appendChild(li);
+    }
+    //this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
 
   showGameOver(totalScore) {
@@ -79,7 +96,12 @@ export class UIView {
   }
 
   reset() {
-    if (this.photoElement) this.photoElement.src = "";
+    if (this.photoElement) {
+      this.photoElement.classList.add("hidden");
+      this.photoElement.removeAttribute('src');
+    }
+    if (this.nextButton) this.nextButton.disabled = true;
+    //if (this.scoreListEl) this.scoreListEl.innerHTML = '';
     this.clearStatus();
   }
 

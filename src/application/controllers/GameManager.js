@@ -1,6 +1,6 @@
 import { SaveGame } from '../usecases/SaveGame.js';
 import { appState } from '../state/AppState.js';
-import { latLng } from 'leaflet';
+//import { latLng } from 'leaflet';
 
 export class GameManager {
   constructor( { gameController, gameMapController , uiView }) {
@@ -49,7 +49,7 @@ export class GameManager {
 
   handleMapClick(latlng) {
     if (this.gameController.isGameOver()) return;
-    this.tempGuess = { lat: latLng.lat, lng: latLng.lng};
+    this.tempGuess = { lat: latlng.lat, lng: latlng.lng };
     this.uiView.setConfirmEnabled(true); 
   } 
 
@@ -87,6 +87,9 @@ export class GameManager {
     this._updatePhotoUI();
   }
 
+
+  
+
   async _endGame() {
     const totalScore = this.gameController.getTotalScore();
     const user = appState.user;
@@ -101,6 +104,9 @@ export class GameManager {
 
     this.uiView.showGameOver(totalScore);
     this._resetAllUI();
+   /*  if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
+    this.gameMapController.disableInteraction();
+    } */
   }
 
   _updatePhotoUI() {
