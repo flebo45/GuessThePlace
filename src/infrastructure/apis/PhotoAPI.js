@@ -3,7 +3,7 @@ import { Photo } from '../../domain/entities/Photo.js';
 const MAPILLARY_BASE_URL = 'https://graph.mapillary.com';
 const MAPILLARY_TOKEN = 'MLY|24471568689210680|a71d8529e468cdfe6474f2cc950bad3b';
 
-// Bounding box globali
+//Bounding box globali
 const GLOBAL_BBOXES = [
   { name: 'North America (Est)', bbox: [-90, 25, -65, 50] },
   { name: 'North America (Ovest)', bbox: [-125, 30, -100, 50] },
@@ -15,7 +15,7 @@ const GLOBAL_BBOXES = [
   { name: 'Oceania (Australia/Nuova Zelanda)', bbox: [140, -40, 180, -20] }
 ];
 
-// 🔹 Genera N bounding box casuali da regioni globali
+//Genera N bounding box casuali da regioni globali
 function generateRandomBboxes(n) {
   const bboxes = [];
   const delta = 0.01;
@@ -29,7 +29,7 @@ function generateRandomBboxes(n) {
   return bboxes;
 }
 
-// 🔹 Chiamata API Mapillary
+//Chiamata API Mapillary
 async function fetchMapillaryImages(bbox, limit = 10) {
   const bboxStr = bbox.join(',');
   const fields = 'id,thumb_1024_url,geometry';
@@ -58,7 +58,7 @@ function areCoordsClose(coord1, coord2, minDistanceDeg = 0.05) {
   return distance < minDistanceDeg; // se troppo vicine, ritorna true
 }
 
-// 🔹 Cerca immagini globali, filtrando quelle troppo vicine
+//Cerca immagini globali, filtrando quelle troppo vicine
 export async function fetchUniqueImages(N = 5, batchSize = 200, limitPerBBox = 20) {
   const uniqueImages = [];
 
@@ -79,7 +79,7 @@ export async function fetchUniqueImages(N = 5, batchSize = 200, limitPerBBox = 2
     }
   }
 
-  // Se non trovi abbastanza immagini, riprova una volta
+  //Se non trovi abbastanza immagini, riprova una volta
   if (uniqueImages.length < N) {
     console.warn(`Solo ${uniqueImages.length} immagini trovate, nuovo tentativo...`);
     return fetchUniqueImages(N, batchSize * 2, limitPerBBox);
@@ -88,7 +88,7 @@ export async function fetchUniqueImages(N = 5, batchSize = 200, limitPerBBox = 2
   return uniqueImages.slice(0, N);
 }
 
-// 🔹 Conversione finale in entity Photo
+//Conversione finale in entity Photo
 export async function fetchPhotoEntities(count = 5) {
   const images = await fetchUniqueImages(count);
   return images.map(img => {

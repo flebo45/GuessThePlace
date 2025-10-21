@@ -71,6 +71,11 @@ export class GameManager {
     this.uiView.setConfirmEnabled(false);
     this.uiView.showNextButton(true);
 
+    // Disable further interaction with the map once the guess is confirmed
+    if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
+      this.gameMapController.disableInteraction();
+    }
+
     this.tempGuess = null;
   }
 
@@ -106,6 +111,10 @@ export class GameManager {
   _resetRoundUI() {
     this.tempGuess = null;
     this.gameMapController.reset();
+    // Re-enable interaction for the next round
+    if (this.gameMapController && typeof this.gameMapController.enableInteraction === 'function') {
+      this.gameMapController.enableInteraction();
+    }
     this.uiView.setConfirmEnabled(false);
     this.uiView.showNextButton(false);
   }
@@ -113,6 +122,10 @@ export class GameManager {
   _resetAllUI() {
     this.tempGuess = null;
     this.gameMapController.reset();
+    // Re-enable map interaction when resetting all UI (new game/end)
+    if (this.gameMapController && typeof this.gameMapController.enableInteraction === 'function') {
+      this.gameMapController.enableInteraction();
+    }
     this.uiView.reset();
     this.uiView.setConfirmEnabled(false);
     this.uiView.showNextButton(false);

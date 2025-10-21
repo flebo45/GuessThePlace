@@ -12,6 +12,20 @@ export class GameMapController {
     this.gameMap.setOnMapClick(callback);
   }
 
+  setInteractive(enabled) {
+    if (this.gameMap && typeof this.gameMap.setInteractive === 'function') {
+      this.gameMap.setInteractive(enabled);
+    }
+  }
+
+  disableInteraction() {
+    this.setInteractive(false);
+  }
+
+  enableInteraction() {
+    this.setInteractive(true);
+  }
+
   reset() {
     this.gameMap.reset();
   }

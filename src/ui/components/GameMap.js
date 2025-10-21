@@ -28,8 +28,10 @@ export class GameMap {
     this.guessMarker = null;
     this.solutionMarker = null;
     this.line = null;
+    this.interactive = true;
 
     this.map.on("click", (e) => {
+      if (!this.interactive) return;
       this.setGuessMarker(e.latlng);
       if (this.onMapClickCallback) {
         this.onMapClickCallback(e.latlng);
@@ -40,6 +42,22 @@ export class GameMap {
 
    setOnMapClick(callback) {
     this.onMapClickCallback = callback;
+  }
+
+  /**
+   * Enable or disable map interaction (clicks).
+   * When disabled, clicks are ignored by the internal handler.
+   */
+  setInteractive(enabled) {
+    this.interactive = !!enabled;
+  }
+
+  enableInteraction() {
+    this.setInteractive(true);
+  }
+
+  disableInteraction() {
+    this.setInteractive(false);
   }
 
   
