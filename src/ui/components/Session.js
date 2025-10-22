@@ -4,8 +4,8 @@ import { UserRepository } from "../../infrastructure/repositories/UserRepository
 
 export function Session(container) {
     const root = document.createElement("div");
-
     root.id = "sessionComponent";
+
     const render = () => {
         root.innerHTML = "";
 
@@ -48,7 +48,7 @@ export function Session(container) {
             const friendsBtn = document.createElement('button');
             friendsBtn.className = 'btn secondary session-friends';
             friendsBtn.textContent = 'Friends';
-            friendsBtn.style.marginLeft = '8px';
+            friendsBtn.classList.add('session-friends');
             friendsBtn.addEventListener('click', async () => {
                 if (!appState.isAuthenticated || !appState.user) {
                     alert('You must be logged in to view your friends.');
@@ -57,21 +57,12 @@ export function Session(container) {
 
                 const overlay = document.createElement('div');
                 overlay.className = 'friends-overlay';
-                Object.assign(overlay.style, {
-                    position: 'fixed', left: 0, top: 0, right: 0, bottom: 0,
-                    background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4000
-                });
 
                 const panel = document.createElement('div');
                 panel.className = 'friends-panel card';
-                Object.assign(panel.style, {
-                    width: '520px', maxHeight: '80vh', overflowY: 'auto', padding: '16px', boxSizing: 'border-box'
-                });
 
                 const header = document.createElement('div');
-                header.style.display = 'flex';
-                header.style.alignItems = 'center';
-                header.style.justifyContent = 'space-between';
+                header.className = 'friends-header';
 
                 const h = document.createElement('h3');
                 h.textContent = 'Users you follow';
@@ -88,7 +79,7 @@ export function Session(container) {
                 panel.appendChild(header);
 
                 const listContainer = document.createElement('div');
-                listContainer.style.marginTop = '12px';
+                listContainer.className = 'friends-list-container';
                 panel.appendChild(listContainer);
 
                 overlay.appendChild(panel);
@@ -108,18 +99,13 @@ export function Session(container) {
                     const users = (await Promise.all(promises)).filter(Boolean);
 
                     const ul = document.createElement('ul');
-                    ul.style.listStyle = 'none';
-                    ul.style.padding = '0';
+                    ul.className = 'friends-list';
 
                     if (!users || users.length === 0) {
-                        // fallback: render entries using IDs
                         following.forEach(id => {
                             const li = document.createElement('li');
-                            li.style.display = 'flex';
-                            li.style.alignItems = 'center';
-                            li.style.justifyContent = 'space-between';
-                            li.style.padding = '8px';
-                            li.style.borderBottom = '1px solid rgba(0,0,0,0.06)';
+                            li.className = 'friends-list-item';
+
                             const infoDiv = document.createElement('div');
                             infoDiv.innerHTML = `<strong>Unknown</strong><div style="font-size:0.85rem;color:var(--muted)">${id}</div>`;
 
@@ -149,11 +135,8 @@ export function Session(container) {
                     } else {
                         users.forEach(u => {
                             const li = document.createElement('li');
-                            li.style.display = 'flex';
-                            li.style.alignItems = 'center';
-                            li.style.justifyContent = 'space-between';
-                            li.style.padding = '8px';
-                            li.style.borderBottom = '1px solid rgba(0,0,0,0.06)';
+                            li.className = 'friends-list-item';
+
                             const username = u.getUsername ? u.getUsername() : (u.username || 'Unknown');
                             const email = u.getEmail ? u.getEmail() : (u.email || '');
                             const infoDiv = document.createElement('div');
@@ -168,11 +151,8 @@ export function Session(container) {
                                     if (!currentUser) return;
                                     unfollowBtn.disabled = true;
                                     await UserRepository.unfollowUser(currentUser.getId ? currentUser.getId() : currentUser.id, u.getId ? u.getId() : u.id);
-                                    if (currentUser.unfollow) {
-                                        currentUser.unfollow(u.getId ? u.getId() : u.id);
-                                    } else if (Array.isArray(currentUser.following)) {
-                                        currentUser.following = currentUser.following.filter(id => id !== (u.getId ? u.getId() : u.id));
-                                    }
+                                    if (currentUser.unfollow) currentUser.unfollow(u.getId ? u.getId() : u.id);
+                                    else if (Array.isArray(currentUser.following)) currentUser.following = currentUser.following.filter(id => id !== (u.getId ? u.getId() : u.id));
                                     if (li.parentNode) li.parentNode.removeChild(li);
                                 } catch (err) {
                                     console.error('Failed to unfollow', err);
@@ -195,11 +175,8 @@ export function Session(container) {
                 }
             });
 
-            // append controls (friends + logout) aligned to the right
             const rightControls = document.createElement('div');
-            rightControls.style.marginLeft = 'auto';
-            rightControls.style.display = 'flex';
-            rightControls.style.alignItems = 'center';
+            rightControls.className = 'session-right-controls';
             rightControls.appendChild(friendsBtn);
             rightControls.appendChild(logoutBtn);
 
@@ -214,9 +191,9 @@ export function Session(container) {
             root.appendChild(p);
         }
     };
+
     appState.subscribe(render);
     render();
-    
     container.appendChild(root);
     return root;
 }
