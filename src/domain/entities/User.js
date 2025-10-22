@@ -23,7 +23,7 @@ export class User {
         if (!docSnap.exists()) return null;
         const data = docSnap.data();
         return new User(
-            data.id,
+            docSnap.id,
             data.email,
             data.username,
             data.following || []

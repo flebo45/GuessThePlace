@@ -3,9 +3,9 @@ import { GameManager } from "../../application/controllers/GameManager.js";
 import { GameController } from "../../application/controllers/GameController.js";
 import { GameMapController } from "../../application/controllers/GameMapController.js";
 import { UIView } from "./UIViews.js";
-import { map } from "leaflet";
+import { UserController } from "../../application/controllers/UserController.js";
 
-export function gameView(root) {
+export async function gameView(root) {
     root.innerHTML = `
     <div class="game-menu-container">
       <header class="game-header">
@@ -49,63 +49,143 @@ export function gameView(root) {
 
     let debounceTimer;
 
+    const userController = UserController;
+
+      // Helper: clear and render results
+    function renderResults(users) {
+      if (!users || users.length === 0) {
+        searchResultsDiv.innerHTML = "<p>No users found.</p>";
+        return;
+      }
+
+      searchResultsDiv.innerHTML = "";
+      users.forEach((user) => {
+        const id = user.getId ? user.getId() : user.id;
+        console.log(id)
+        const username = user.getUsername ? user.getUsername() : user.username;
+        console.log(username)
+        const userDiv = document.createElement("div");
+        userDiv.className = "search-result-item";
+        userDiv.textContent = username;
+        userDiv.dataset.userId = id;
+        userDiv.dataset.username = username;
+
+        searchResultsDiv.appendChild(userDiv);
+      });
+    }
+
+      // --- SEARCH LOGIC ---
+    async function performSearch(prefix) {
+      if (!prefix) {
+        searchResultsDiv.innerHTML = "<p>Please enter a username prefix to search.</p>";
+        return;
+      }
+
+      searchResultsDiv.innerHTML = "<p>Searching...</p>";
+
+      try {
+        const { SearchUser } = await import("../../application/usecases/SearchUser.js");
+        const results = await SearchUser.byUsernamePrefix(prefix, 10);
+        renderResults(results);
+      } catch (error) {
+        console.error("Error during user search:", error);
+        searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
+      }
+    }
+
+    // --- DEBOUNCED INPUT SEARCH ---
     searchInput.addEventListener("input", () => {
       const prefix = searchInput.value.trim();
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(async () => {
-        if (prefix.length < 3) {
-            searchResultsDiv.innerHTML = "";
-            return;
-        }
-      
-        try {
-            const { SearchUser } = await import("../../application/usecases/SearchUser.js");
-            const results = await SearchUser.byUsernamePrefix(prefix, 10);
-
-            searchResultsDiv.innerHTML = results.length
-              ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
-              : "<p>No users found.</p>";
-        } catch (error) {
-            console.error("Error during user search: ", error);
-            searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
-        }
-      }, 300); // Debounce delay of 300ms
+      debounceTimer = setTimeout(() => performSearch(prefix), 300);
     });
 
-
-    searchButton.addEventListener("click", async () => {
-        const prefix = searchInput.value.trim();
-        if (!prefix) {
-            searchResultsDiv.innerHTML = "<p>Please enter a username prefix to search.</p>";
-            return;
-        }
-
-        searchResultsDiv.innerHTML = "<p>Searching...</p>";
-
-        try {
-            const { SearchUser } = await import("../../application/usecases/SearchUser.js");
-            const results = await SearchUser.byUsernamePrefix(prefix);
-
-            if (results.length === 0) {
-                searchResultsDiv.innerHTML = "<p>No users found.</p>";
-                return;
-            }
-
-            searchResultsDiv.innerHTML = results.length
-              ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
-              : "<p>No users found.</p>";
-        } catch (error) {
-            console.error("Error during user search: ", error);
-            searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
-        }
+    // --- BUTTON SEARCH ---
+    searchButton.addEventListener("click", () => {
+      const prefix = searchInput.value.trim();
+      performSearch(prefix);
     });
 
-    searchResultsDiv.addEventListener("click", (event) => {
+    // --- RESULT CLICK HANDLER ---
+    searchResultsDiv.addEventListener("click", async (event) => {
       const userItem = event.target.closest(".search-result-item");
-      if (userItem) {
-          console.log(`User selected: ${userItem.textContent}`);
+      if (!userItem) return;
+
+      const selectedUserId = userItem.dataset.userId;
+      const selectedUsername = userItem.dataset.username;
+      console.log(`User selected: ${selectedUsername} (id=${selectedUserId})`);
+
+      // Show user profile in gameContainer
+      gameContainer.classList.remove("hidden");
+      gameContainer.innerHTML = "<p>Loading profile...</p>";
+
+      try {
+        const { UserView } = await import("../views/UserView.js");
+        const userView = new UserView(gameContainer, userController);
+        await userView.render(selectedUserId);
+      } catch (err) {
+        console.error("Error rendering user profile:", err);
+        gameContainer.innerHTML = `<div class="error">Error loading user profile.</div>`;
       }
     });
+
+    // searchInput.addEventListener("input", () => {
+    //   const prefix = searchInput.value.trim();
+    //   clearTimeout(debounceTimer);
+    //   debounceTimer = setTimeout(async () => {
+    //     if (prefix.length < 3) {
+    //         searchResultsDiv.innerHTML = "";
+    //         return;
+    //     }
+      
+    //     try {
+    //         const { SearchUser } = await import("../../application/usecases/SearchUser.js");
+    //         const results = await SearchUser.byUsernamePrefix(prefix, 10);
+
+    //         searchResultsDiv.innerHTML = results.length
+    //           ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
+    //           : "<p>No users found.</p>";
+    //     } catch (error) {
+    //         console.error("Error during user search: ", error);
+    //         searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
+    //     }
+    //   }, 300); // Debounce delay of 300ms
+    // });
+
+
+    // searchButton.addEventListener("click", async () => {
+    //     const prefix = searchInput.value.trim();
+    //     if (!prefix) {
+    //         searchResultsDiv.innerHTML = "<p>Please enter a username prefix to search.</p>";
+    //         return;
+    //     }
+
+    //     searchResultsDiv.innerHTML = "<p>Searching...</p>";
+
+    //     try {
+    //         const { SearchUser } = await import("../../application/usecases/SearchUser.js");
+    //         const results = await SearchUser.byUsernamePrefix(prefix);
+
+    //         if (results.length === 0) {
+    //             searchResultsDiv.innerHTML = "<p>No users found.</p>";
+    //             return;
+    //         }
+
+    //         searchResultsDiv.innerHTML = results.length
+    //           ? results.map(user => `<div class="search-result-item">${user.getUsername()}</div>`).join("")
+    //           : "<p>No users found.</p>";
+    //     } catch (error) {
+    //         console.error("Error during user search: ", error);
+    //         searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
+    //     }
+    // });
+
+    // searchResultsDiv.addEventListener("click", (event) => {
+    //   const userItem = event.target.closest(".search-result-item");
+    //   if (userItem) {
+    //       console.log(`User selected: ${userItem.textContent}`);
+    //   }
+    // });
 
     startGameButton.addEventListener("click", () => {
       gameContainer.classList.remove("hidden");

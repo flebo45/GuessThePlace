@@ -45,8 +45,8 @@ export const UserRepository = {
 
     async login({email, password}) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        //TODO add extra user data fromm firebase database
-        return User.fromFirebaseUser(userCredential.user);
+        const user = this.getUserById(userCredential.user.uid)
+        return user;
     },
     
     async logout() {
