@@ -4,6 +4,7 @@ import { GameController } from "../../application/controllers/GameController.js"
 import { GameMapController } from "../../application/controllers/GameMapController.js";
 import { UIView } from "./UIViews.js";
 import { UserController } from "../../application/controllers/UserController.js";
+import { LeaderboardView } from "./LeaderboardView.js";
 
 export async function gameView(root) {
     root.innerHTML = `
@@ -33,6 +34,7 @@ export async function gameView(root) {
 
         <div id="searchResults" class="menu-section search-results"></div>
         <div id="gameContainer" class="hidden"></div>
+        <div id="leaderboardContainer" class="hidden"></div>
         </main>
     </div>
     `;
@@ -219,6 +221,7 @@ export async function gameView(root) {
 
 
     leaderboardButton.addEventListener("click", () => {
-        alert("Showing leaderboard...");
+        const container = document.getElementById("leaderboardContainer");
+        LeaderboardView(container);
     });
 }

@@ -61,6 +61,20 @@ export const UserRepository = {
         return new User(userId, data.email || null, data.username || null, data.following || []);
     },
 
+    async getUsersByIds(userIds = []) {
+        if (!userIds || userIds.length === 0) return [];
+        const results = [];
+        for (const id of userIds) {
+            const dref = doc(db, "users", id);
+            const snap = await getDoc(dref);
+            if (snap.exists()) {
+                const data = snap.data();
+                results.push({ id: snap.id, ...data });
+            }
+        }
+        return results;
+    },
+
     async getUserFromUsername(username) {
         if (!username) return null;
 
