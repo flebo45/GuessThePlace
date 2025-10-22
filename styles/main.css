@@ -43,6 +43,21 @@ button { font:inherit; }
 .menu-input { padding:8px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text); }
 .menu-button { margin-left:8px; }
 
+/* Auth forms (login/register) */
+.auth-form { display:flex; flex-direction:column; gap:12px; max-width:380px; }
+.form-field label { font-size:0.82rem; color:var(--muted); margin-bottom:6px; display:block; }
+.form-input { padding:10px 12px; border-radius:8px; border:1px solid rgba(2,6,23,0.08); background:#fff; color:var(--page-text); box-shadow: 0 6px 18px rgba(2,6,23,0.04); }
+.form-input:focus { outline:none; box-shadow: 0 8px 24px rgba(0,179,166,0.12); border-color: var(--accent); }
+.form-actions { display:flex; gap:8px; align-items:center; }
+.auth-form .btn { padding:10px 16px; border-radius:10px; box-shadow: 0 10px 28px rgba(2,6,23,0.08); font-weight:700; }
+.auth-form .btn.secondary { background:transparent; border:1px solid rgba(0,0,0,0.06); color:var(--page-text); }
+
+/* Auth choice buttons (Login / Register) */
+.auth-choices { display:flex; gap:12px; margin-bottom:12px; }
+.auth-choices .btn { padding:12px 18px; border-radius:12px; background: linear-gradient(90deg,#6ee7b7,#00b3a6); color:#021012; font-weight:800; box-shadow: 0 12px 30px rgba(2,6,23,0.10); }
+.auth-choices .btn.secondary { background: transparent; border:1px solid rgba(0,0,0,0.08); color:var(--page-text); box-shadow:none; }
+.auth-choices .btn:hover { transform: translateY(-4px); }
+
 /* Game layout */
 .game-main { display:flex; gap:20px; align-items:flex-start; }
 .left-column { width:420px; }
@@ -111,6 +126,118 @@ button { font:inherit; }
 .session-label { font-size:0.75rem; color:var(--muted); }
 .session-name { font-weight:700; }
 .session-logout { margin-left:auto; }
+
+/* Make session buttons (friends/logout) show a white background on hover with dark text for contrast */
+.session-friends, .session-logout {
+  transition: background 160ms ease, color 160ms ease;
+}
+.session-friends:hover, .session-logout:hover {
+  background: #ffffff;
+  color: var(--page-text);
+  border-color: rgba(0,0,0,0.06);
+}
+
+/* Friends panel should be white with dark text to match user's request */
+.friends-panel.card {
+  background: #ffffff;
+  color: var(--page-text);
+}
+
+.friends-panel.card h3 { margin: 0 0 8px 0; }
+.friends-panel.card ul li { color: var(--page-text); }
+
+/* Make secondary buttons inside friends panel visible on white background */
+.friends-panel.card .btn.secondary {
+  /* Force high-contrast appearance for buttons inside the white panel */
+  display: inline-block;
+  background: #ffffff !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+  padding: 6px 10px !important;
+  margin-left: 12px;
+}
+
+/* Style the follow button used in search/profile to match Unfollow appearance */
+.follow-btn {
+  display: inline-block;
+  background: #ffffff !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+  padding: 6px 10px !important;
+  margin-left: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.follow-btn:hover {
+  background: rgba(0,0,0,0.04);
+}
+.follow-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Boxed username for search results to match follow/unfollow button appearance */
+.user-result .user-name-box {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #000000;
+  color: #000000;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.user-result .user-name-box:hover { background: rgba(0,0,0,0.04); }
+
+/* Close button: black framed with black text to be clearly visible */
+.friends-panel.card #closeFriends {
+  background: transparent;
+  border: 2px solid #000000;
+  color: #000000;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* Leaderboard panel should match friends panel (white card) */
+.leaderboard-panel.card {
+  background: #ffffff;
+  color: var(--page-text);
+}
+
+.leaderboard-panel.card h3 { margin: 0 0 8px 0; }
+.leaderboard-panel.card .leaderboards-grid { display:flex; gap:12px; }
+
+/* Close button for leaderboard panel */
+.leaderboard-panel.card #closeLeaderboard {
+  background: transparent;
+  border: 2px solid #000000;
+  color: #000000;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* Refresh button styling inside leaderboard panel: make it prominent and pretty */
+.leaderboard-panel.card .leaderboard-refresh {
+  background: linear-gradient(90deg,#6ee7b7,#00b3a6);
+  color: #021012;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(2,6,23,0.10);
+  font-weight: 800;
+  cursor: pointer;
+}
+.leaderboard-panel.card .leaderboard-refresh:disabled { opacity:0.6; cursor:not-allowed; }
+
+/* If a secondary button is used in leaderboard, force high-contrast like friends panel */
+.leaderboard-panel.card .btn.secondary {
+  display: inline-block;
+  background: #ffffff !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+  padding: 6px 10px !important;
+  margin-left: 12px;
+}
+
+/* Slight hover effect for unfollow inside the white panel */
+.friends-panel.card .btn.secondary:hover {
+  background: rgba(0,0,0,0.04);
+}
 
 /* Center hero actions (start / scoreboard) */
 .hero-actions { display:flex; gap:28px; justify-content:center; align-items:center; margin:28px 0; }

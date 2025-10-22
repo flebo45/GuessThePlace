@@ -9,6 +9,7 @@ export async function LeaderboardView(root) {
         <div id="globalLeaderboard" class="leaderboard-slot"></div>
         <div id="friendsLeaderboard" class="leaderboard-slot"></div>
       </div>
+      <div class="leaderboard-footer" style="display:flex;justify-content:flex-end;margin-top:12px"></div>
     </div>
   `;
 
@@ -38,9 +39,12 @@ export async function LeaderboardView(root) {
     friendsSlot.innerHTML = "<div class='error'>Unable to load friends leaderboard</div>";
   }
 
-  // Optionally add a "refresh" button
+  // Add a "Refresh" button in the footer
   const refreshBtn = document.createElement("button");
   refreshBtn.textContent = "Refresh";
+  refreshBtn.className = 'leaderboard-refresh';
+  const footer = root.querySelector('.leaderboard-footer');
+  if (footer) footer.appendChild(refreshBtn);
   refreshBtn.addEventListener("click", async () => {
     refreshBtn.disabled = true;
     try {
@@ -57,6 +61,6 @@ export async function LeaderboardView(root) {
     }
   });
 
-  root.appendChild(refreshBtn);
+  // ensure the view is visible
   root.classList.remove("hidden");
 }

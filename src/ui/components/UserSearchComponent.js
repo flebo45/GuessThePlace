@@ -43,7 +43,10 @@ export function UserSearchComponent(container, { onSelect} = {}) {
         users.forEach(user => {
             const userDiv = document.createElement("div");
             userDiv.className = "user-result";
-            userDiv.textContent = user.getUsername();
+            const nameBox = document.createElement('div');
+            nameBox.className = 'user-name-box';
+            nameBox.textContent = user.getUsername();
+            userDiv.appendChild(nameBox);
             userDiv.addEventListener("click", () => {
                 if (onSelect) onSelect(user);
             });

@@ -7,12 +7,20 @@ export function Login(container) {
     
     root.innerHTML = `
     <h2>Login</h2>
-    <form id="login-form">
-        <input type="email" id="email" name="email" placeholder="Email" required />
-        <input type="password" id="password" name="password" placeholder="Password" required />
-        <button type="submit">Login</button>
+    <form id="login-form" class="auth-form card">
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-field">
+            <label for="password">Password</label>
+            <input class="form-input" type="password" id="password" name="password" placeholder="●●●●●●" required />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">Login</button>
+        </div>
     </form>
-    <div id="loginMessage"></div>
+    <div id="loginMessage" class="status" aria-live="polite"></div>
     <div id="sessionInfo"></div>
     `;
 

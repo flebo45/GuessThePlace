@@ -65,15 +65,17 @@ export async function gameView(root) {
       searchResultsDiv.innerHTML = "";
       users.forEach((user) => {
         const id = user.getId ? user.getId() : user.id;
-        console.log(id)
         const username = user.getUsername ? user.getUsername() : user.username;
-        console.log(username)
         const userDiv = document.createElement("div");
         userDiv.className = "search-result-item";
-        userDiv.textContent = username;
         userDiv.dataset.userId = id;
         userDiv.dataset.username = username;
 
+        const nameBox = document.createElement('div');
+        nameBox.className = 'user-name-box';
+        nameBox.textContent = username;
+
+        userDiv.appendChild(nameBox);
         searchResultsDiv.appendChild(userDiv);
       });
     }
@@ -220,8 +222,51 @@ export async function gameView(root) {
     });
 
 
-    leaderboardButton.addEventListener("click", () => {
-        const container = document.getElementById("leaderboardContainer");
-        LeaderboardView(container);
+  leaderboardButton.addEventListener("click", async () => {
+    // Create overlay (modal) similar to Friends panel
+    const overlay = document.createElement('div');
+    overlay.className = 'leaderboard-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
+    overlay.style.right = '0';
+    overlay.style.bottom = '0';
+    overlay.style.background = 'rgba(0,0,0,0.6)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.zIndex = '4000';
+
+    const panel = document.createElement('div');
+    panel.className = 'leaderboard-panel card';
+    panel.style.width = '760px';
+    panel.style.maxHeight = '85vh';
+    panel.style.overflowY = 'auto';
+    panel.style.padding = '18px';
+
+    panel.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h3>Leaderboards</h3>
+        <button id="closeLeaderboard" class="btn secondary">Close</button>
+      </div>
+      <div id="leaderboardSlot" style="margin-top:12px">Loading...</div>
+    `;
+
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#closeLeaderboard').addEventListener('click', () => {
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     });
+
+    try {
+      const slot = panel.querySelector('#leaderboardSlot');
+      // Use the existing LeaderboardView to populate the slot
+      await LeaderboardView(slot);
+    } catch (err) {
+      console.error('Error rendering leaderboard view:', err);
+      const slot = panel.querySelector('#leaderboardSlot');
+      if (slot) slot.innerHTML = '<div class="error">Unable to load leaderboard.</div>';
+    }
+  });
 }

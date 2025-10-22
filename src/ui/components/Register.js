@@ -7,13 +7,24 @@ export function Register(container) {
 
     root.innerHTML = `
     <h2>Register</h2>
-    <form id="register-form">
-        <input type="text" id="username" name="username" placeholder="Username" required />
-        <input type="email" id="email" name="email" placeholder="Email" required />
-        <input type="password" id="password" name="password" placeholder="Password" required />
-        <button type="submit">Register</button>
+    <form id="register-form" class="auth-form card">
+        <div class="form-field">
+            <label for="username">Username</label>
+            <input class="form-input" type="text" id="username" name="username" placeholder="yourname" required />
+        </div>
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-field">
+            <label for="password">Password</label>
+            <input class="form-input" type="password" id="password" name="password" placeholder="●●●●●●" required />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">Register</button>
+        </div>
     </form>
-    <div id="registerMessage"></div>
+    <div id="registerMessage" class="status" aria-live="polite"></div>
     `;
 
     const form = root.querySelector("#register-form");

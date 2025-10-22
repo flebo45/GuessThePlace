@@ -3,9 +3,9 @@ import { Register } from "../components/Register.js";
 
 export function logView(container) {
     container.innerHTML = `
-    <div>
-        <button id="btnShowLogin">Login</button>
-        <button id="btnShowRegister">Register</button>
+    <div class="auth-choices">
+        <button id="btnShowLogin" class="btn">Login</button>
+        <button id="btnShowRegister" class="btn secondary">Register</button>
     </div>
     <div id="main"></div>
     `;
