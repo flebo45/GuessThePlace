@@ -10,27 +10,33 @@ export class UIView {
     this.statusElement = null;
 
     this.handlers = {};
+    this._loaderEl = null;
+    this._loaderShownAt = 0;
   }
 
   renderGameUI() {
     this.root.innerHTML = `
-      <div class="game-ui-container">
-        <div id="status" class="game-status"></div>
-        <div class="photo-container">
-          <img id="photoElement" alt="Guess the location" class="game-photo hidden" />
+      <div class="play-area">
+        <div class="left-panel">
+          <div id="status" class="game-status"></div>
+          <div class="photo-container">
+            <img id="photoElement" alt="Guess the location" class="game-photo hidden" />
+          </div>
+
+          <div class="controls">
+            <button id="confirmGuessBtn" disabled>Confirm Guess</button>
+            <button id="nextRoundBtn" disabled>Next Round</button>
+          </div>
         </div>
-        
-        <div class="scoreboard">
-          <h3>Round scores</h3>
-          <ul id="scoreList" class="score-list"></ul>
+
+        <div class="right-panel">
+          <div id="map" class="map-panel"></div>
+          <div class="scoreboard">
+            <h3>Round scores</h3>
+            <ul id="scoreList" class="score-list"></ul>
+          </div>
         </div>
-        
-        <div class="controls">
-          <button id="confirmGuessBtn" disabled>Confirm Guess</button>
-          <button id="nextRoundBtn" disabled>Next Round</button>
-        </div>  
       </div>
-      <div id="map"></div>
     `;
 
     this.container = this.root.querySelector(".game-ui-container");
@@ -66,9 +72,52 @@ export class UIView {
     }
   }
 
+  /** Show a JS-managed loader overlay inside the photo container.
+   * Ensures a minimum visible time to avoid flicker. Safe to call repeatedly.
+   */
+  showLoader({ minMs = 250 } = {}) {
+    try {
+      const container = this.root.querySelector('.photo-container');
+      if (!container) return;
+      if (this._loaderEl) return; // already shown
+
+      const el = document.createElement('div');
+      el.className = 'js-loader';
+      el.innerHTML = '<div class="spinner" aria-hidden="true"></div>';
+      container.appendChild(el);
+      this._loaderEl = el;
+      this._loaderShownAt = Date.now();
+      this._loaderMinMs = Number(minMs) || 250;
+    } catch (e) {
+      console.warn('showLoader failed', e);
+    }
+  }
+
+  hideLoader() {
+    try {
+      if (!this._loaderEl) return;
+      const elapsed = Date.now() - (this._loaderShownAt || 0);
+      const remaining = Math.max(0, (this._loaderMinMs || 0) - elapsed);
+      const remove = () => {
+        try {
+          if (this._loaderEl && this._loaderEl.parentNode) this._loaderEl.parentNode.removeChild(this._loaderEl);
+        } catch (err) { /* ignore */ }
+        this._loaderEl = null;
+        this._loaderShownAt = 0;
+        this._loaderMinMs = 0;
+      };
+      if (remaining > 0) setTimeout(remove, remaining);
+      else remove();
+    } catch (e) {
+      console.warn('hideLoader failed', e);
+    }
+  }
+
   setStatus(message) {
     if (this.statusElement) this.statusElement.textContent = message;
   }
+
+  // loader removed: showLoader/hideLoader are intentionally not present
 
   clearStatus() {
     if (this.statusElement) this.statusElement.textContent = '';
@@ -104,6 +153,8 @@ export class UIView {
     if (this.nextButton) this.nextButton.disabled = true;
     //if (this.scoreListEl) this.scoreListEl.innerHTML = '';
     this.clearStatus();
+    // ensure loader removed when resetting UI
+    this.hideLoader?.();
   }
 
   /** Provide a reference to the map container so controller can init GameMapController */

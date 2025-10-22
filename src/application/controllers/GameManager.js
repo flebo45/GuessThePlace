@@ -24,8 +24,10 @@ export class GameManager {
 
   async startNewGame() {
     this._resetAllUI();
-    // Show loadig notify
+    // Show loading notify
     this.uiView.setStatus('Recupero foto... potrebbe volerci qualche istante.');
+    // Request the view to show a loader (ensures container exists and handles min display time)
+    try { this.uiView.showLoader({ minMs: 250 }); } catch (e) { /* ignore */ }
     try {
       // wait for photos fetch
       await this.gameController.startNewGame();
@@ -42,6 +44,8 @@ export class GameManager {
       console.error('Errore startNewGame:', err);
       this.uiView.setStatus('Errore nel recupero delle foto. Riprova.');
     } finally {
+      // Ask the view to hide the loader (it enforces min display time)
+      try { this.uiView.hideLoader(); } catch (e) { /* ignore */ }
       // Remove message
       setTimeout(() => this.uiView.clearStatus(), 2000);
     }
@@ -103,7 +107,15 @@ export class GameManager {
     }
 
     this.uiView.showGameOver(totalScore);
-    //this._resetAllUI();
+    // Make the main menu controls visible again (start / scoreboard / search) with a fade-in
+    try {
+      const hero = document.querySelector('.hero-actions');
+      if (hero) { hero.classList.remove('hidden'); hero.classList.add('fade-in'); }
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar) { searchBar.classList.remove('hidden'); searchBar.classList.add('fade-in'); }
+    } catch (e) {
+      // ignore if DOM not available
+    }
    /*  if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
     this.gameMapController.disableInteraction();
     } */

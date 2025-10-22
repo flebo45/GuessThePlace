@@ -14,7 +14,8 @@ export async function gameView(root) {
       </header>
 
       <main class="game-main">
-        <div class="menu-section">
+        <div class="hero-viewport">
+          <div class="menu-section search-bar">
           <input 
             type="text" 
             id="userSearchInput" 
@@ -22,11 +23,12 @@ export async function gameView(root) {
             class="menu-input"
           />
           <button id="searchButton" class="menu-button">Search</button>
-        </div>
+          </div>
 
-        <div class="menu-section">
-          <button id="startGameButton" class="menu-button">🎮 Start New Game</button>
-          <button id="leaderboardButton" class="menu-button">🏆 Leaderboard</button>
+          <div class="menu-section hero-actions">
+            <button id="startGameButton" class="hero-btn start">Start new game</button>
+            <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
+          </div>
         </div>
 
         <div id="searchResults" class="menu-section search-results"></div>
@@ -189,6 +191,11 @@ export async function gameView(root) {
 
     startGameButton.addEventListener("click", () => {
       gameContainer.classList.remove("hidden");
+      // Hide the hero actions and search bar once the game starts
+      const heroActions = root.querySelector('.hero-actions');
+      if (heroActions) heroActions.classList.add('hidden');
+      const searchBar = root.querySelector('.search-bar');
+      if (searchBar) searchBar.classList.add('hidden');
       const uiView = new UIView(gameContainer);
       uiView.renderGameUI();
       const gameController = new GameController();

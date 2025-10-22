@@ -1,0 +1,133 @@
+/* Main stylesheet for GuessThePlace
+   - Organized with sections: variables, base, layout, components, views
+   - Lightweight and safe defaults for the existing HTML structure
+*/
+
+:root {
+  --bg: #0f1724; /* dark navy (used for session box) */
+  --page-bg: #ffffff; /* new page background */
+  --page-text: #021012; /* dark text for page */
+  --card: #0b1220;
+  --muted: #9aa4b2;
+  --accent: #00b3a6; /* teal */
+  --accent-2: #ffb86b; /* warm */
+  --text: #e6eef6;
+  --danger: #ff6b6b;
+  --radius: 8px;
+  --max-width: 1100px;
+}
+
+/* Reset-ish */
+* { box-sizing: border-box; }
+html,body { height:100%; margin:0; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: var(--page-bg); color:var(--page-text); }
+img { max-width:100%; display:block; }
+button { font:inherit; }
+
+/* Layout */
+.container { max-width:var(--max-width); margin: 24px auto; padding: 16px; }
+
+.game-header { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.game-header h2 { margin:0; font-size:1.5rem; }
+.header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.hidden { display:none !important; }
+
+/* Card */
+.card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)); border-radius:var(--radius); padding:12px; box-shadow: 0 4px 20px rgba(2,6,23,0.6); }
+
+/* Buttons */
+.btn { background:var(--accent); color: #032022; padding:10px 14px; border-radius:6px; border:none; cursor:pointer; }
+.btn.secondary { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* Menu and inputs */
+.menu-input { padding:8px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text); }
+.menu-button { margin-left:8px; }
+
+/* Game layout */
+.game-main { display:flex; gap:20px; align-items:flex-start; }
+.left-column { width:420px; }
+.right-column { flex:1; min-width:300px; }
+
+#map { height:420px; width:420px; border-radius:8px; overflow:hidden; }
+#photo-container { max-width:420px; border-radius:6px; overflow:hidden; }
+
+/* Controls */
+.controls { display:flex; gap:8px; margin-top:12px; }
+.controls .btn { flex:0 0 auto; }
+
+/* Scoreboard */
+.score-list { list-style:none; padding:0; margin:0; }
+.score-item { display:flex; justify-content:space-between; padding:6px 8px; border-bottom:1px dashed rgba(255,255,255,0.03); }
+
+/* Small helpers */
+.center { text-align:center; }
+.status { color:var(--muted); font-size:0.95rem; }
+
+/* View specific prefixes (keeps specificity low) */
+/* View-specific prefixes left as naming convention examples; no empty rules here. */
+
+/* Responsive */
+@media (max-width:800px) {
+  .game-main { flex-direction:column; }
+  .left-column, #map, #photo-container { width:100%; }
+}
+
+/* Play area: photo + map side-by-side */
+.play-area { display:flex; gap:20px; align-items:flex-start; padding:16px; }
+.left-panel { width:40%; display:flex; flex-direction:column; gap:12px; }
+.right-panel { width:60%; display:flex; flex-direction:column; gap:12px; }
+
+.photo-container { position:relative; width:100%; border-radius:10px; overflow:hidden; min-height:260px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.01)); }
+.game-photo { width:100%; height:auto; display:block; border-radius:8px; }
+.map-panel { width:100%; height:520px; border-radius:10px; overflow:hidden; }
+
+/* JS-created loader overlay (added/removed by JS) */
+.js-loader { position:absolute; left:0; top:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.45); z-index:2000; pointer-events:all; }
+.js-loader .spinner { width:48px; height:48px; border-radius:50%; border:5px solid rgba(255,255,255,0.22); border-top-color:var(--accent); animation: spin 1s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Fade-in helper for showing elements */
+.fade-in { animation: fadeIn 360ms ease both; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+
+/* Loader removed - restored simple behavior (no spinner overlay) */
+
+@media (max-width:900px) {
+  .play-area { flex-direction:column; }
+  .left-panel, .right-panel { width:100%; }
+  .map-panel { height:360px; }
+}
+
+/* Session component */
+#sessionComponent { display:flex; align-items:center; }
+.session-wrapper { display:flex; align-items:center; gap:10px; padding:8px 10px; }
+
+.session-wrapper { display:flex; align-items:center; gap:10px; padding:8px 12px; }
+/* make the session card white with dark text as requested */
+.session-wrapper.card { background: linear-gradient(180deg, var(--bg) 0%, #071026 100%); color: var(--text); box-shadow: 0 6px 24px rgba(2,6,23,0.08); }
+.session-avatar { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#021012; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.05rem; box-shadow: 0 2px 8px rgba(2,6,23,0.12); }
+.session-info { display:flex; flex-direction:column; min-width:120px; }
+.session-label { font-size:0.75rem; color:var(--muted); }
+.session-name { font-weight:700; }
+.session-logout { margin-left:auto; }
+
+/* Center hero actions (start / scoreboard) */
+.hero-actions { display:flex; gap:28px; justify-content:center; align-items:center; margin:28px 0; }
+.hero-actions .hero-btn { padding:20px 36px; border-radius:14px; font-size:1.15rem; font-weight:800; box-shadow: 0 12px 32px rgba(2,6,23,0.18); color:#021012; border:none; cursor:pointer; flex: 0 0 260px; text-align:center; transition:transform 160ms ease, box-shadow 160ms ease; }
+.hero-actions .hero-btn:hover { transform:translateY(-6px); box-shadow: 0 18px 42px rgba(2,6,23,0.22); }
+.hero-btn.start { background: linear-gradient(90deg, #6ee7b7, #00b3a6); }
+.hero-btn.score { background: linear-gradient(90deg, #ffd28a, #ffb86b); }
+
+/* Improve search input style */
+.search-bar { display:flex; gap:8px; align-items:center; }
+.search-bar .menu-input { padding:10px 12px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); background:#fff; color:var(--page-text); }
+.search-bar .menu-button { padding:8px 10px; border-radius:6px; }
+
+.search-results { margin-top:8px; }
+.search-result-item { padding:8px 10px; border-radius:8px; cursor:pointer; background: rgba(255,255,255,0.01); margin-bottom:6px; }
+.search-result-item:hover { background: rgba(255,255,255,0.03); }
+
+/* Small tweaks for header layout */
+.game-header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.menu-section { margin-bottom:12px; }
