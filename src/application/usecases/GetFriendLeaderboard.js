@@ -15,7 +15,7 @@ export const GetFriendsLeaderboard = {
     const following = Array.from(currentUser.getFollowing ? currentUser.getFollowing() : (currentUser.following || []));
     if (!following || following.length === 0) return [];
 
-    const topGames = await GameRepository.getTopGamesByUsersSince(following, sinceDate, limit);
+    const topGames = await GameRepository.getTopGamesByUsersSince(following, sinceDate);
     if (!topGames || topGames.length === 0) return [];
 
     // resolve usernames

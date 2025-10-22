@@ -18,7 +18,7 @@ export async function LeaderboardView(root) {
 
   // initial placeholders
   const globalComp = Leaderboard(globalSlot, { title: "Global - top 10 (last 7 days)", entries: [] });
-  const friendsComp = Leaderboard(friendsSlot, { title: "Friends - top 10 (last 7 days)", entries: [] });
+  const friendsComp = Leaderboard(friendsSlot, { title: "Friends - top game per friend (last 7 days)", entries: [] });
 
   // compute since date = now - 7 days
   const sinceDate = new Date();

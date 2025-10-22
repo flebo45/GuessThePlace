@@ -73,38 +73,32 @@ export class GameRepository {
     }
 
 
-    static async getTopGamesByUsersSince(userIds = [], sinceDate, limit = 10) {
+    static async getTopGamesByUsersSince(userIds = [], sinceDate) {
         if (!Array.isArray(userIds) || userIds.length === 0) return [];
 
         const sinceTs = Timestamp.fromDate(sinceDate);
 
-        // split into chunks of <= 10 (Firestore 'in' max)
-        const chunkSize = 10;
-        const chunks = [];
-        for (let i = 0; i < userIds.length; i += chunkSize) {
-            chunks.push(userIds.slice(i, i + chunkSize));
-        }
-
         const results = [];
 
-        for (const chunk of chunks) {
+        for (const userId of userIds) {
             const q = query(
                 this.collectionref,
-                where("userId", "in", chunk),
+                where("userId", "==", userId),
                 where("date", ">=", sinceTs),
                 orderBy("totalScore", "desc"),
-                fbLimit(limit) // get top N per chunk - we'll merge later
+                fbLimit(1) // get top N per chunk - we'll merge later
             );
 
             const snapshot = await getDocs(q);
-            console.log(snapshot);
-            snapshot.docs.forEach(d => results.push({ id: d.id, ...d.data() }));
+            if (!snapshot.empty) {
+                const doc = snapshot.docs[0];
+                results.push({ id: doc.id, ...doc.data() });
+            }
         }
 
-        // merge & sort by score desc, then take top `limit`
-        results.sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
-        console.log(results);
-        return results.slice(0, limit);
+        results.sort((a, b) => b.totalScore - a.totalScore);
+
+        return results;
     }
 
 }
