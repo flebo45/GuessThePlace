@@ -438,6 +438,41 @@ button { font:inherit; }
   align-items: center;
 }
 
+/* Right side of header: search + session */
+.header-right { display:flex; align-items:flex-start; gap:12px; }
+.search-wrapper { position:relative; display:flex; flex-direction:column; align-items:flex-end; }
+.search-wrapper .search-bar { align-items:center; }
+
+/* Search results dropdown positioned under the search bar */
+#searchResults.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 320px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: #ffffff;
+  color: var(--page-text);
+  box-shadow: 0 8px 30px rgba(2,6,23,0.12);
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 3000;
+}
+
+/* Hide the dropdown completely when it has no children/content to avoid showing
+   an empty white box with shadow under the search bar */
+.search-wrapper #searchResults:empty {
+  display: none;
+}
+
+#searchResults.search-results p { margin:0; padding:8px; }
+
+/* Make sure session container stays to the right of the search wrapper */
+#sessionContainer { margin-left:8px; }
+
+/* Ensure dropdown content stacks vertically and fills dropdown width */
+.search-wrapper #searchResults { display:flex; flex-direction:column; align-items:stretch; }
+
 /* Main content styling */
 .game-main {
   display: flex;

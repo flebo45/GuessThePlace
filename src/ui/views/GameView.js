@@ -7,32 +7,35 @@ import { UserController } from "../../application/controllers/UserController.js"
 import { LeaderboardView } from "./LeaderboardView.js";
 
 export async function gameView(root) {
-    root.innerHTML = `
-    <div class="game-menu-container">
-      <header class="game-header">
-        <h2>Guess The Place</h2>
-        <div id="sessionContainer"></div>
-      </header>
+        root.innerHTML = `
+        <div class="game-menu-container">
+            <header class="game-header">
+                <h2>Guess The Place</h2>
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <div class="menu-section search-bar">
+                            <input type="text" id="userSearchInput" placeholder="🔍 Search user by username..." class="menu-input" />
+                            <button id="searchButton" class="menu-button">Search</button>
+                        </div>
+                        <div id="searchResults" class="menu-section search-results"></div>
+                    </div>
+                    <div id="sessionContainer"></div>
+                </div>
+            </header>
 
-      <main class="game-main">
-        <div class="hero-viewport">
-          <div class="menu-section search-bar">
-          <input type="text" id="userSearchInput" placeholder="🔍 Search user by username..." class="menu-input" />
-          <button id="searchButton" class="menu-button">Search</button>
-          </div>
+            <main class="game-main">
+                <div class="hero-viewport">
+                    <div class="menu-section hero-actions">
+                        <button id="startGameButton" class="hero-btn start">Start new game</button>
+                        <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
+                    </div>
+                </div>
 
-          <div class="menu-section hero-actions">
-            <button id="startGameButton" class="hero-btn start">Start new game</button>
-            <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
-          </div>
+                <div id="gameContainer" class="hidden"></div>
+                <div id="leaderboardContainer" class="hidden"></div>
+            </main>
         </div>
-
-        <div id="searchResults" class="menu-section search-results"></div>
-        <div id="gameContainer" class="hidden"></div>
-        <div id="leaderboardContainer" class="hidden"></div>
-      </main>
-    </div>
-    `;
+        `;
 
     const sessionContainer = root.querySelector("#sessionContainer");
     Session(sessionContainer);
@@ -97,19 +100,44 @@ export async function gameView(root) {
         performSearch(prefix);
     });
 
+    // Clicking anywhere outside the search area cancels the search and hides results
+    document.addEventListener('click', (event) => {
+        const clickedInsideSearch = !!event.target.closest('.search-wrapper');
+        if (!clickedInsideSearch) {
+            // clear input and results
+            if (searchInput.value && searchInput.value.trim() !== '') {
+                searchInput.value = '';
+            }
+            if (searchResultsDiv && searchResultsDiv.innerHTML.trim() !== '') {
+                searchResultsDiv.innerHTML = '';
+            }
+        }
+    });
+
     searchResultsDiv.addEventListener("click", async (event) => {
         const userItem = event.target.closest(".search-result-item");
         if (!userItem) return;
         const selectedUserId = userItem.dataset.userId;
-        gameContainer.classList.remove("hidden");
-        gameContainer.innerHTML = "<p>Loading profile...</p>";
+
+        // Render profile inside the searchResults dropdown
+        let profileSlot = searchResultsDiv.querySelector('#searchProfile');
+        if (!profileSlot) {
+            profileSlot = document.createElement('div');
+            profileSlot.id = 'searchProfile';
+            profileSlot.className = 'search-profile card';
+            searchResultsDiv.appendChild(profileSlot);
+        }
+
+        profileSlot.innerHTML = '<p>Loading profile...</p>';
         try {
             const { UserView } = await import("../views/UserView.js");
-            const userView = new UserView(gameContainer, userController);
+            const userView = new UserView(profileSlot, userController);
             await userView.render(selectedUserId);
+            // Ensure the newly rendered profile is visible inside the dropdown
+            profileSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } catch (err) {
             console.error("Error rendering user profile:", err);
-            gameContainer.innerHTML = `<div class="error">Error loading user profile.</div>`;
+            profileSlot.innerHTML = `<div class="error">Error loading user profile.</div>`;
         }
     });
 
