@@ -7,20 +7,21 @@ import { UserController } from "../../application/controllers/UserController.js"
 import { LeaderboardView } from "./LeaderboardView.js";
 
 export async function gameView(root) {
+
         root.innerHTML = `
         <div class="game-menu-container">
             <header class="game-header">
-                <h2>Guess The Place</h2>
-                <div class="header-right">
-                    <div class="search-wrapper">
-                        <div class="menu-section search-bar">
-                            <input type="text" id="userSearchInput" placeholder="🔍 Search user by username..." class="menu-input" />
-                            <button id="searchButton" class="menu-button">Search</button>
-                        </div>
-                        <div id="searchResults" class="menu-section search-results"></div>
+                <div class="title-box"><h2>Guess The Place</h2></div>
+
+                <div class="search-wrapper">
+                    <div class="menu-section search-bar">
+                        <input type="text" id="userSearchInput" placeholder="🔍 Search user by username..." class="menu-input" />
+                        <button id="searchButton" class="menu-button">Search</button>
                     </div>
-                    <div id="sessionContainer"></div>
+                    <div id="searchResults" class="menu-section search-results"></div>
                 </div>
+
+                <div id="sessionContainer"></div>
             </header>
 
             <main class="game-main">
@@ -36,6 +37,7 @@ export async function gameView(root) {
             </main>
         </div>
         `;
+
 
     const sessionContainer = root.querySelector("#sessionContainer");
     Session(sessionContainer);
