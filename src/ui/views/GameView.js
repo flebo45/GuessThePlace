@@ -1,3 +1,5 @@
+// file: GameView.js
+
 import { Session } from "../components/Session";
 import { GameManager } from "../../application/controllers/GameManager.js";
 import { GameController } from "../../application/controllers/GameController.js";
@@ -9,20 +11,23 @@ import { LeaderboardView } from "./LeaderboardView.js";
 export async function gameView(root) {
 
         root.innerHTML = `
-        <div class="game-menu-container">
-            <header class="game-header">
+                    <header class="game-header">
                 <div class="title-box"><h2>Guess The Place</h2></div>
 
-                <div class="search-wrapper">
-                    <div class="menu-section search-bar">
-                        <input type="text" id="userSearchInput" placeholder="🔍 Search user by username..." class="menu-input" />
-                        <button id="searchButton" class="menu-button">Search</button>
+                <div class="header-right">
+                    <div class="search-wrapper">
+                        <div class="menu-section search-bar">
+                            <input type="text" id="userSearchInput" placeholder="Search user by username..." class="menu-input" autocomplete="off">
+                            <button id="searchButton" class="menu-button">Search</button>
+                        </div>
+                        <div id="searchResults" class="menu-section search-results"></div>
                     </div>
-                    <div id="searchResults" class="menu-section search-results"></div>
-                </div>
 
-                <div id="sessionContainer"></div>
-            </header>
+                    <div id="sessionContainer"></div>
+                </div>
+                </header>
+        <div class="game-menu-container">
+
 
             <main class="game-main">
                 <div class="hero-viewport">

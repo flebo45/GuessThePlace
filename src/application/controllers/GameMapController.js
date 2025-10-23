@@ -11,7 +11,7 @@ export class GameMapController {
   onMapClick(callback) {
     this.gameMap.setOnMapClick(callback);
   }
-
+  
   setInteractive(enabled) {
     if (this.gameMap && typeof this.gameMap.setInteractive === 'function') {
       this.gameMap.setInteractive(enabled);

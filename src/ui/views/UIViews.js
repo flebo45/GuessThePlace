@@ -8,6 +8,7 @@ export class UIView {
     this.confirmButton = null;
     this.nextButton = null;
     this.statusElement = null;
+    this.playArea = null;
 
     this.handlers = {};
     this._loaderEl = null;
@@ -24,8 +25,8 @@ export class UIView {
           </div>
 
           <div class="controls">
-            <button id="confirmGuessBtn" disabled>Confirm Guess</button>
-            <button id="nextRoundBtn" disabled>Next Round</button>
+            <button id="confirmGuessBtn" class="btn" disabled>Confirm Guess</button>
+            <button id="nextRoundBtn" class="btn" disabled>Next Round</button>
           </div>
         </div>
 
@@ -143,9 +144,12 @@ export class UIView {
   showGameOver(totalScore) {
     this.setStatus(`Game over! Total score: ${totalScore}`);
     if (this.nextButton) this.nextButton.disabled = true;
+    if(this.playArea) this.playArea.classList.add("hidden")
   }
 
   reset() {
+    if (this.playArea) this.playArea.classList.remove("hidden");
+
     if (this.photoElement) {
       this.photoElement.classList.add("hidden");
       this.photoElement.removeAttribute('src');

@@ -1,6 +1,6 @@
 import { SaveGame } from '../usecases/SaveGame.js';
 import { appState } from '../state/AppState.js';
-//import { latLng } from 'leaflet';
+import { latLng } from 'leaflet';
 
 export class GameManager {
   constructor( { gameController, gameMapController , uiView }) {
@@ -24,10 +24,8 @@ export class GameManager {
 
   async startNewGame() {
     this._resetAllUI();
-    // Show loading notify
+    // Show loadig notify
     this.uiView.setStatus('Recupero foto... potrebbe volerci qualche istante.');
-    // Request the view to show a loader (ensures container exists and handles min display time)
-    try { this.uiView.showLoader({ minMs: 250 }); } catch (e) { /* ignore */ }
     try {
       // wait for photos fetch
       await this.gameController.startNewGame();
@@ -44,8 +42,6 @@ export class GameManager {
       console.error('Errore startNewGame:', err);
       this.uiView.setStatus('Errore nel recupero delle foto. Riprova.');
     } finally {
-      // Ask the view to hide the loader (it enforces min display time)
-      try { this.uiView.hideLoader(); } catch (e) { /* ignore */ }
       // Remove message
       setTimeout(() => this.uiView.clearStatus(), 2000);
     }
@@ -53,7 +49,7 @@ export class GameManager {
 
   handleMapClick(latlng) {
     if (this.gameController.isGameOver()) return;
-    this.tempGuess = { lat: latlng.lat, lng: latlng.lng };
+    this.tempGuess = { lat: latLng.lat, lng: latLng.lng};
     this.uiView.setConfirmEnabled(true); 
   } 
 
@@ -75,7 +71,6 @@ export class GameManager {
     this.uiView.setConfirmEnabled(false);
     this.uiView.showNextButton(true);
 
-    // Disable further interaction with the map once the guess is confirmed
     if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
       this.gameMapController.disableInteraction();
     }
@@ -91,9 +86,6 @@ export class GameManager {
     this._updatePhotoUI();
   }
 
-
-  
-
   async _endGame() {
     const totalScore = this.gameController.getTotalScore();
     const user = appState.user;
@@ -107,7 +99,6 @@ export class GameManager {
     }
 
     this.uiView.showGameOver(totalScore);
-    // Make the main menu controls visible again (start / scoreboard / search) with a fade-in
     try {
       const hero = document.querySelector('.hero-actions');
       if (hero) { hero.classList.remove('hidden'); hero.classList.add('fade-in'); }
@@ -119,6 +110,7 @@ export class GameManager {
    /*  if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
     this.gameMapController.disableInteraction();
     } */
+   // this._resetAllUI();
   }
 
   _updatePhotoUI() {
@@ -129,7 +121,6 @@ export class GameManager {
   _resetRoundUI() {
     this.tempGuess = null;
     this.gameMapController.reset();
-    // Re-enable interaction for the next round
     if (this.gameMapController && typeof this.gameMapController.enableInteraction === 'function') {
       this.gameMapController.enableInteraction();
     }
@@ -140,7 +131,6 @@ export class GameManager {
   _resetAllUI() {
     this.tempGuess = null;
     this.gameMapController.reset();
-    // Re-enable map interaction when resetting all UI (new game/end)
     if (this.gameMapController && typeof this.gameMapController.enableInteraction === 'function') {
       this.gameMapController.enableInteraction();
     }
