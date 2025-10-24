@@ -9,7 +9,7 @@ import { UserController } from "../../application/controllers/UserController.js"
 import { LeaderboardView } from "./LeaderboardView.js";
 
 export async function gameView(root) {
-
+        document.body.classList.add("body");
         root.innerHTML = `
                     <header class="game-header">
                 <div class="title-box"><h2>Guess The Place</h2></div>
@@ -182,7 +182,7 @@ export async function gameView(root) {
         header.appendChild(h3);
 
         const closeBtn = document.createElement('button');
-        closeBtn.className = 'btn secondary';
+        closeBtn.className = 'leaderboard-refresh';
         closeBtn.textContent = 'Close';
         closeBtn.addEventListener('click', () => {
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);

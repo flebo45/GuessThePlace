@@ -6,7 +6,6 @@ export function Register(container) {
     const root = document.createElement("div");
 
     root.innerHTML = `
-    <h2>Register</h2>
     <form id="register-form" class="auth-form card">
         <div class="form-field">
             <label for="username">Username</label>

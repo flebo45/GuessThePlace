@@ -6,7 +6,6 @@ export function Login(container) {
     const root = document.createElement("div");
     
     root.innerHTML = `
-    <h2>Login</h2>
     <form id="login-form" class="auth-form card">
         <div class="form-field">
             <label for="email">Email</label>
