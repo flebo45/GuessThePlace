@@ -222,12 +222,37 @@ button { font: inherit; }
 }
 
 /* Stile per la Scoreboard */
+.top-right { grid-area: right; width: 100%; display: flex; align-items: start; justify-content: flex-end; }
+
 .scoreboard {
+    width: 100%;
+    max-width: 760px; /* Match photo max-width so heights stay equal */
+    aspect-ratio: 16 / 9; /* Fixed height tied to width, equal to photo ratio */
     background: var(--card);
     color: var(--text);
     border-radius: 10px;
     padding: 16px;
     box-shadow: 0 4px 20px rgba(2,6,23,0.6);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* contain inner scrolling area */
+    font-size: 1.3rem; /* Larger base text inside scoreboard */
+}
+
+.scoreboard h3 {
+    font-size: 1.75rem;
+    margin: 0 0 10px 0;
+}
+
+.scoreboard .score-list li {
+    font-size: 1.3rem;
+    line-height: 1.35;
+    padding: 6px 2px;
+}
+
+.scoreboard .score-list {
+    flex: 1 1 auto;
+    min-height: 0; /* allows proper flex scrolling */
     overflow-y: auto;
 }
 
@@ -255,6 +280,7 @@ button { font: inherit; }
     margin-top: 12px;
     font-weight: 700;
     color: var(--accent);
+    font-size: 1.3rem;
 }
 
 /* Responsive: stack on small screens */

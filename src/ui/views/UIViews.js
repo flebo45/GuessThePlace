@@ -13,6 +13,7 @@ export class UIView {
     this.handlers = {};
     this._loaderEl = null;
     this._loaderShownAt = 0;
+    this._scrollTimerId = null;
   }
 
   renderGameUI() {
@@ -34,7 +35,6 @@ export class UIView {
           <div class="scoreboard">
             <h3>Round scores</h3>
             <ul id="scoreList" class="score-list"></ul>
-            <div id="gameOverMessage" class="game-over-message hidden"></div>
           </div>
         </div>
 
@@ -49,9 +49,8 @@ export class UIView {
     this.photoElement = this.root.querySelector("#photoElement");
     this.confirmButton = this.root.querySelector("#confirmGuessBtn");
     this.nextButton = this.root.querySelector("#nextRoundBtn");
-    this.scoreListEl = this.root.querySelector("#scoreList");
-    this.statusElement = this.root.querySelector("#status");
-  this.gameOverEl = this.root.querySelector("#gameOverMessage");
+  this.scoreListEl = this.root.querySelector("#scoreList");
+  this.statusElement = this.root.querySelector("#status");
 
     this.confirmButton.addEventListener("click", () => {
       this.handlers.onConfirmGuess?.();
@@ -145,19 +144,29 @@ export class UIView {
     }
     //this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
-   scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'smooth' // Rende lo scroll graduale
-    });
+scrollToTop() {
+    // Definisci il tempo di attesa in millisecondi (es: 500ms = mezzo secondo)
+    const delayInMilliseconds = 4000; 
+
+    setTimeout(() => {
+        // Questo codice verrà eseguito DOPO che il ritardo è passato
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth' // Rende lo scroll graduale
+        });
+    }, delayInMilliseconds); // Passa il ritardo qui
 }
+
   showGameOver(totalScore) {
     this.scrollToTop();
-    // Show message under the Round scores list
-    if (this.gameOverEl) {
-      this.gameOverEl.textContent = `Game over! Total score: ${totalScore}`;
-      this.gameOverEl.classList.remove('hidden');
+    // Append message as the last score item
+    if (this.scoreListEl) {
+      const li = document.createElement('li');
+      li.className = 'game-over-message';
+      li.textContent = `Game over! Total score: ${totalScore}`;
+      this.scoreListEl.appendChild(li);
+      try { li.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
     }
     if (this.nextButton) this.nextButton.disabled = true;
     if(this.playArea) this.playArea.classList.add("hidden")
