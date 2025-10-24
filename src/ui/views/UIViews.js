@@ -144,7 +144,8 @@ export class UIView {
     }
     //this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
-scrollToTop() {
+
+ scrollToTop() {
     // Definisci il tempo di attesa in millisecondi (es: 500ms = mezzo secondo)
     const delayInMilliseconds = 4000; 
 
