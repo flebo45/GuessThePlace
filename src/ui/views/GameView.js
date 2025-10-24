@@ -35,7 +35,10 @@ export async function gameView(root, router, options = {}) {
             <main class="game-main">
                 <div class="hero-viewport">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
                     <div class="menu-section hero-actions">
