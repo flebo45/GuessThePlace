@@ -144,6 +144,7 @@ button { font: inherit; }
     display: flex;
     flex-direction: column; /* Consolidato per il layout mobile/desktop flessibile */
     gap: 16px;
+    background-color: black;
 }
 .left-column { width: 420px; }
 .right-column { flex: 1; min-width: 300px; }
