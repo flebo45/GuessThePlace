@@ -8,8 +8,11 @@ import { UIView } from "./UIViews.js";
 import { UserController } from "../../application/controllers/UserController.js";
 import { LeaderboardView } from "./LeaderboardView.js";
 
-export async function gameView(root) {
-        document.body.classList.add("body");
+export async function gameView(root, router, options = {}) {
+    const mode = options.mode || 'home';
+    // Ensure only the game body class is active
+    document.body.classList.remove("login-register-body");
+    document.body.classList.add("body");
         root.innerHTML = `
                     <header class="game-header">
                 <div class="title-box"><h2>Guess The Place</h2></div>
@@ -31,9 +34,7 @@ export async function gameView(root) {
 
             <main class="game-main">
                 <div class="hero-viewport">
-                <div class="logo-image-container">
-                     <img src="src/images/logo.png" alt="GuessThePlace Logo" class="main-logo">
-                 </div>
+               
                     <div class="menu-section hero-actions">
                         <button id="startGameButton" class="hero-btn start">Start new game</button>
                         <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
@@ -151,7 +152,7 @@ export async function gameView(root) {
         }
     });
 
-    startGameButton.addEventListener("click", () => {
+    function startPlay() {                    // come funzione, addEventListener sotto
         gameContainer.classList.remove("hidden");
         const heroActions = root.querySelector('.hero-actions');
         if (heroActions) heroActions.classList.add('hidden');
@@ -168,9 +169,9 @@ export async function gameView(root) {
         uiView.on("onNextRound", () => gameManager.nextRound());
         mapController.onMapClick((latlng) => gameManager.setTempGuess(latlng));
         gameManager.startNewGame();
-    });
+    }
 
-    leaderboardButton.addEventListener("click", async () => {
+    async function openScoreboard() {      // come funzione, addEventListener sotto
         const overlay = document.createElement('div');
         overlay.className = 'leaderboard-overlay';
 
@@ -189,6 +190,10 @@ export async function gameView(root) {
         closeBtn.textContent = 'Close';
         closeBtn.addEventListener('click', () => {
             if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            // return to /game on close if we are on /game/scoreboard
+            if (router && window.location.pathname.endsWith('/scoreboard')) {   //aggiunti i due if
+                router.navigate('/game', { replace: true });
+            }
         });
         header.appendChild(closeBtn);
 
@@ -209,5 +214,29 @@ export async function gameView(root) {
             console.error('Error rendering leaderboard view:', err);
             slot.innerHTML = '<div class="error">Unable to load leaderboard.</div>';
         }
+    }
+
+    // Wire buttons to routes per collegare le azioni dei bottoni alle rotte e alle funzioni
+    startGameButton.addEventListener("click", () => {  
+        if (router) {
+            router.navigate('/game/play');
+        } else {
+            startPlay();
+        }
     });
+
+    leaderboardButton.addEventListener("click", async () => {
+        if (router) {
+            router.navigate('/game/scoreboard');
+        } else {
+            await openScoreboard();
+        }
+    });
+
+    // Auto-apply mode on initial render
+    if (mode === 'play') {
+        startPlay();
+    } else if (mode === 'scoreboard') {
+        await openScoreboard();
+    }
 }

@@ -1,8 +1,12 @@
 import { Login } from "../components/Login.js";
 import { Register } from "../components/Register.js";
 
-export function logView(container) {
-    document.body.classList.add("login-register-body");
+// initialTab: 'login' | 'register'
+// router (optional): if provided, switches URL to /login or /register on tab buttons
+export function logView(container, initialTab = 'login', router) {  //aggiunto inizialTab e router come parametro opzionale
+    // Ensure only the auth page body class is active
+    document.body.classList.remove("body");
+    document.body.classList.add("login-register-body");  // per lo stile
 
     container.innerHTML = `
     <div class="auth-center-wrapper">
@@ -17,15 +21,27 @@ export function logView(container) {
     
     const main = container.querySelector("#main");
     container.querySelector("#btnShowLogin").addEventListener("click", () => {
+        if (router) {
+            router.navigate('/login');  // aggiunto l'if
+            return;
+        }
         main.innerHTML = "";
         Login(main);
     });
 
     container.querySelector("#btnShowRegister").addEventListener("click", () => {
+        if (router) {
+            router.navigate('/register');  // aggiunto l'if
+            return;
+        }
         main.innerHTML = "";
         Register(main);
     });
 
     main.innerHTML = "";
-    Login(main);
+    if (initialTab === 'register') { //aggiuntio l'if-else
+        Register(main);
+    } else {
+        Login(main);
+    }
 }
