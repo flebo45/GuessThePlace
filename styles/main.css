@@ -491,8 +491,8 @@ button { font: inherit; }
     gap: 28px;
     justify-content: center;
     align-items: center;
-   /* height: 59vh; */ /* Centrato verticalmente nella finestra */
-    /*margin: 28px 0;*/
+    height: 59vh; /* Centrato verticalmente nella finestra */
+    margin: 28px 0;
 }
 .hero-actions .hero-btn {
     padding: 20px 36px;
@@ -836,23 +836,3 @@ h2 {
     background-color: #303133;
 }
 
-.hero-viewport {
-    display: flex;
-    flex-direction: column;  /* Impila gli elementi verticalmente */
-    align-items: center;      /* Centra orizzontalmente */
-    justify-content: center;  /* Centra verticalmente */
-    
-    /* Sposta qui le vecchie proprietà di .hero-actions */
-    min-height: 60vh; 
-    margin: 28px 0;
-}
-
-
-.hero-viewport .logo-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 150px;  /* Larghezza desiderata per il logo grande */
-    height: 150px; /* Altezza desiderata */
-    margin-bottom: 32px; /* Spazio tra il logo e i pulsanti */
-}

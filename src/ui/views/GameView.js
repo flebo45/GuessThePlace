@@ -34,7 +34,10 @@ export async function gameView(root, router, options = {}) {
 
             <main class="game-main">
                 <div class="hero-viewport">
+<<<<<<< Updated upstream
                
+=======
+>>>>>>> Stashed changes
                     <div class="menu-section hero-actions">
                         <button id="startGameButton" class="hero-btn start">Start new game</button>
                         <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
