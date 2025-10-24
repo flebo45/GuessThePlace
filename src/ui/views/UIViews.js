@@ -19,6 +19,7 @@ export class UIView {
   renderGameUI() {
     this.root.innerHTML = `
       <div class="play-area grid-layout">
+        <div id="gameMessage" class="top-message hidden"></div>
         <div class="top-left">
           <div id="status" class="game-status"></div>
           <div class="photo-container">
@@ -45,12 +46,14 @@ export class UIView {
     `;
 
     this.container = this.root.querySelector(".game-ui-container");
-    this.mapContainer = this.root.querySelector("#map");
+  this.playArea = this.root.querySelector('.play-area');
+  this.mapContainer = this.root.querySelector("#map");
     this.photoElement = this.root.querySelector("#photoElement");
     this.confirmButton = this.root.querySelector("#confirmGuessBtn");
     this.nextButton = this.root.querySelector("#nextRoundBtn");
   this.scoreListEl = this.root.querySelector("#scoreList");
   this.statusElement = this.root.querySelector("#status");
+  this.gameMessageEl = this.root.querySelector('#gameMessage');
 
     this.confirmButton.addEventListener("click", () => {
       this.handlers.onConfirmGuess?.();
@@ -161,16 +164,14 @@ export class UIView {
 
   showGameOver(totalScore) {
     this.scrollToTop();
-    // Append message as the last score item
-    if (this.scoreListEl) {
-      const li = document.createElement('li');
-      li.className = 'game-over-message';
-      li.textContent = `Game over! Total score: ${totalScore}`;
-      this.scoreListEl.appendChild(li);
-      try { li.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+    // Show message below the two buttons, above photo and scoreboard
+    if (this.gameMessageEl) {
+      this.gameMessageEl.textContent = `Game over! Total score: ${totalScore}`;
+      this.gameMessageEl.classList.remove('hidden');
+      try { this.gameMessageEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
     }
     if (this.nextButton) this.nextButton.disabled = true;
-    if(this.playArea) this.playArea.classList.add("hidden")
+    // Keep play area visible so message remains in view
   }
 
   reset() {
