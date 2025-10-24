@@ -2,6 +2,7 @@
  * Main stylesheet for GuessThePlace - CLEANED and CONSOLIDATED
  * - Variables, base, layout, components, views.
  * - Optimized for clarity and removed redundant/duplicate declarations.
+ * - ADDED Responsive media queries for mobile and tablet.
 */
 
 :root {
@@ -29,6 +30,20 @@ html,body {
     color: var(--page-text);
 }
 img { max-width: 100%; display: block; }
+
+/* Base h2 style (Consolidated) */
+h2 {
+    font-size: 2.0rem; 
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    animation: fadeInTitle 0.8s ease-out;
+    text-shadow: none; 
+    /* Gradient properties are set by specific rules below */
+}
+
 button { font: inherit; }
 
 /* Layout */
@@ -169,11 +184,6 @@ button { font: inherit; }
     padding: 6px 8px;
     border-bottom: 1px dashed rgba(255,255,255,0.03);
 }
-.scoreboard {
-    text-align: center;
-    width: 100%;
-    max-width: 960px;
-}
 
 /* Small helpers */
 .center { text-align: center; }
@@ -202,37 +212,36 @@ button { font: inherit; }
     flex-direction: column;
     gap: 12px;
 }
+
+/* CONSOLIDATED: .right-panel (from two definitions) */
 .right-panel {
     width: 100%;
     display: flex;
-    
-    gap: 12px;
-    background-color: #000000; /* Sfondo scuro ereditato */
+    gap: 20px; /* 20px from second rule overrides 12px from first */
+    background-color: #000000; 
     color: #ffffff;
-}
-
-.right-panel {
-    display: flex; /* Abilita Flexbox per affiancare gli elementi */
-    gap: 20px; /* Spazio tra la mappa e la scoreboard */
-    width: 100%;
-    /* Se necessario, aggiungi un'altezza fissa se non è specificata dal contenitore genitore */
     /* height: 450px; /* Esempio di altezza fissa */
 }
 
-/* Stile per la Mappa */
+/* CONSOLIDATED: .map-panel (from two definitions) */
 .map-panel {
     flex: 2; /* Assegna 2 porzioni di spazio alla mappa (es. 66%) */
-    height: 100%; /* Occupa l'altezza completa del right-panel */
+    height: 420px; /* 420px from second rule overrides 100% from first */
     min-height: 400px; /* Altezza minima per la mappa */
     border-radius: 10px;
     overflow: hidden;
 }
 
-/* Stile per la Scoreboard */
+/* CONSOLIDATED: .scoreboard (from two definitions) */
 .scoreboard {
+    /* From first rule */
+    text-align: center;
+    max-width: 960px;
+    /* width: 100%; /* Overridden by flex: 1 */
+
+    /* From second rule */
     flex: 1; /* Assegna 1 porzione di spazio alla scoreboard (es. 33%) */
     height: 100%; /* Occupa l'altezza completa del right-panel */
-    /* Lo sfondo e il padding esistenti sono mantenuti */
     background: var(--card);
     color: var(--text);
     border-radius: 10px;
@@ -241,14 +250,14 @@ button { font: inherit; }
     overflow-y: auto;
 }
 
-.photo-container{
+/* CONSOLIDATED: .photo-container (from two definitions) */
+.photo-container {
+    /* From first rule */
     flex: 1 1 400px;
     max-width: 500px;
     border-radius: 10px;
     overflow: hidden;
-}
-
-.photo-container {
+    /* From second rule */
     position: relative;
     width: 100%;
     min-height: 260px;
@@ -257,8 +266,8 @@ button { font: inherit; }
     justify-content: center;
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.01));
 }
+
 .game-photo { width: 100%; height: auto; display: block; border-radius: 10px; }
-.map-panel { height: 420px; }
 
 
 /* JS-created loader overlay */
@@ -349,8 +358,9 @@ button { font: inherit; }
 }
 
 
-/* Friends Panel (Popup) */
-.friends-overlay {
+/* CONSOLIDATED: Friends & Leaderboard Overlays */
+.friends-overlay,
+.leaderboard-overlay {
     position: fixed;
     left: 0;
     top: 0;
@@ -362,6 +372,8 @@ button { font: inherit; }
     justify-content: center;
     z-index: 4000;
 }
+
+/* Friends Panel (Popup) */
 .friends-panel {
     width: 520px;
     max-height: 80vh;
@@ -369,11 +381,20 @@ button { font: inherit; }
     padding: 16px;
     box-sizing: border-box;
 }
-.friends-panel.card {
+
+/* CONSOLIDATED: Friends & Leaderboard Panel .card styles */
+.friends-panel.card,
+.leaderboard-panel.card {
     background: #ffffff;
     color: var(--page-text);
 }
-.friends-panel.card h3 { margin: 0 0 8px 0; }
+
+/* CONSOLIDATED: Friends & Leaderboard Panel h3 styles */
+.friends-panel.card h3,
+.leaderboard-panel.card h3 {
+    margin: 0 0 8px 0;
+}
+
 .friends-panel.card ul li { color: var(--page-text); }
 .friends-header { display: flex; align-items: center; justify-content: space-between; }
 .friends-list-container { margin-top: 12px; }
@@ -386,8 +407,9 @@ button { font: inherit; }
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-/* Buttons inside Friends Panel (secondary/follow/close) */
-.friends-panel.card .btn.secondary {
+/* CONSOLIDATED: Buttons inside Friends & Leaderboard Panel (secondary) */
+.friends-panel.card .btn.secondary,
+.leaderboard-panel.card .btn.secondary {
     display: inline-block;
     background: #ffffff !important;
     border: 1px solid #000000 !important;
@@ -395,8 +417,12 @@ button { font: inherit; }
     padding: 6px 10px !important;
     margin-left: 12px;
 }
+
 .friends-panel.card .btn.secondary:hover { background: rgba(0,0,0,0.04); }
-.friends-panel.card #closeFriends {
+
+/* CONSOLIDATED: Close Buttons inside Friends & Leaderboard Panel */
+.friends-panel.card #closeFriends,
+.leaderboard-panel.card #closeLeaderboard {
     background: transparent;
     border: 2px solid #000000;
     color: #000000;
@@ -405,18 +431,6 @@ button { font: inherit; }
 }
 
 /* Leaderboard Panel (Popup) */
-.leaderboard-overlay {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 4000;
-}
 .leaderboard-panel {
     width: 760px;
     max-height: 85vh;
@@ -424,23 +438,12 @@ button { font: inherit; }
     padding: 18px;
     box-sizing: border-box;
 }
-.leaderboard-panel.card {
-    background: #ffffff;
-    color: var(--page-text);
-}
-.leaderboard-panel.card h3 { margin: 0 0 8px 0; }
+
 .leaderboard-panel.card .leaderboards-grid { display: flex; gap: 12px; }
 .leaderboard-header { display: flex; justify-content: space-between; align-items: center; }
 .leaderboard-slot { margin-top: 12px; }
 
 /* Buttons inside Leaderboard Panel */
-.leaderboard-panel.card #closeLeaderboard {
-    background: transparent;
-    border: 2px solid #000000;
-    color: #000000;
-    padding: 6px 10px;
-    border-radius: 6px;
-}
 .leaderboard-panel.card .leaderboard-refresh {
     background: linear-gradient(90deg,#6ee7b7,#00b3a6);
     color: #021012;
@@ -452,14 +455,6 @@ button { font: inherit; }
     cursor: pointer;
 }
 .leaderboard-panel.card .leaderboard-refresh:disabled { opacity: 0.6; cursor: not-allowed; }
-.leaderboard-panel.card .btn.secondary {
-    display: inline-block;
-    background: #ffffff !important;
-    border: 1px solid #000000 !important;
-    color: #000000 !important;
-    padding: 6px 10px !important;
-    margin-left: 12px;
-}
 
 /* Follow/Unfollow Button in Search/Profile */
 .follow-btn {
@@ -526,21 +521,13 @@ button { font: inherit; }
     border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
 }
 
+/* CONSOLIDATED: .game-header h2 (inherits from base h2) */
 .game-header h2 {
-    font-size: 2.0rem; 
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    animation: fadeInTitle 0.8s ease-out;
-
-    /* Testo Gradiente Neon */
+    /* Testo Gradiente Neon (Override) */
     background: linear-gradient(90deg, #ff7e5f, #feb47b);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none; 
 }
 
 @keyframes fadeInTitle {
@@ -667,18 +654,6 @@ button { font: inherit; }
         opacity: 0.95;
         transform: scale(1.02);
     }
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 900px) {
-    .play-area { flex-direction: column; }
-    .left-panel, .right-panel { width: 100%; }
-    .map-panel { height: 360px; }
-}
-
-@media (max-width: 800px) {
-    .game-main { flex-direction: column; }
-    .left-column, #map, #photo-container { width: 100%; }
 }
 
 /* Leaderboard Component (Inside the Panel/Modal) */
@@ -815,24 +790,153 @@ button { font: inherit; }
         0 0 40px rgba(0, 179, 166, 0.3);
 }
 
-h2 {
-    font-size: 2.0rem; 
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    animation: fadeInTitle 0.8s ease-out;
-
+/* CONSOLIDATED: h2 style for auth pages (inherits from base h2) */
+.auth-center-wrapper h2 {
     /* Testo Gradiente Neon */
     background: linear-gradient(180deg, #00b3a6, #feb47b);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: none; 
 }
+
 
 .login-register-body{
     background-color: #303133;
 }
 
+
+/* * ===============================================
+ * RESPONSIVE DESIGN RULES 
+ * ===============================================
+*/
+
+/* Tablet - (Consolida le vecchie regole 900px e 800px) */
+@media (max-width: 900px) {
+    /* Layout di gioco */
+    .play-area { flex-direction: column; }
+    .left-panel, .right-panel { width: 100%; }
+    .map-panel { height: 360px; }
+    
+    /* Aggiunte per impilare mappa e scoreboard */
+    .right-panel { flex-direction: column; }
+    .scoreboard { max-height: 400px; /* Altezza per lo scroll su tablet */ }
+
+    /* Layout 'game-main' (se usato) */
+    .game-main { flex-direction: column; }
+    .left-column, #map, #photo-container { width: 100%; }
+}
+
+/* Mobile - (Regole generali per smartphone) */
+@media (max-width: 767px) {
+    /* Header */
+    .game-header {
+        flex-direction: column;
+        gap: 12px;
+        height: auto;
+        padding: 16px;
+    }
+    .title-box { height: auto; }
+    .header-right {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    .search-wrapper { width: 100%; }
+    .search-bar { width: 100%; height: 55px; }
+    #sessionComponent {
+        width: 100%;
+        margin-left: 0;
+    }
+    .session-wrapper.card {
+        width: 100%;
+        justify-content: space-between;
+        height: auto;
+        padding: 10px;
+    }
+    .session-info { min-width: 0; flex-grow: 1; }
+
+    /* Hero Actions (Homepage) */
+    .hero-actions {
+        flex-direction: column;
+        height: auto;
+        gap: 20px;
+        padding: 40px 20px;
+    }
+    .hero-actions .hero-btn {
+        flex-basis: auto;
+        width: 100%;
+        max-width: 320px; /* Limita la larghezza massima sui telefoni */
+    }
+
+    /* Auth Form */
+    .auth-center-wrapper {
+        width: 90vw; /* 90% della larghezza della finestra */
+        min-width: 0;
+        padding: 24px 20px;
+    }
+    .form-input {
+        padding: 18px 20px;
+        min-height: 55px;
+        font-size: 1rem;
+    }
+
+    /* Popups / Modals */
+    .friends-panel,
+    .leaderboard-panel {
+        width: 95vw; /* Occupa quasi tutto lo schermo */
+        max-height: 85vh;
+        padding: 16px;
+    }
+    .leaderboards-grid {
+        flex-direction: column; /* Impila le classifiche */
+    }
+    
+    /* Leaderboard interna */
+    .lb-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .lb-user, .lb-score, .lb-date {
+        flex-basis: auto;
+        text-align: left;
+        width: 100%;
+    }
+    .lb-score { font-size: 1.1rem; }
+
+    /* Search Results Dropdown */
+    #searchResults.search-results {
+        width: 95vw;
+        left: 2.5vw;
+        right: 2.5vw;
+    }
+}
+
+/* Small Mobile - (Regole per schermi < 480px) */
+@media (max-width: 480px) {
+    /* Riduci leggermente i titoli */
+    h2,
+    .auth-center-wrapper h2,
+    .game-header h2 {
+        font-size: 1.7rem;
+    }
+
+    .auth-center-wrapper {
+        padding: 20px 16px;
+    }
+    
+    /* Impila i pulsanti "Login" / "Register" */
+    .form-actions {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+    .auth-form .btn {
+        width: 100%;
+    }
+    
+    .hero-actions .hero-btn {
+        padding: 16px 24px;
+        font-size: 1.05rem;
+    }
+}
