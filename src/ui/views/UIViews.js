@@ -140,8 +140,15 @@ export class UIView {
     }
     //this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
-
+   scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth' // Rende lo scroll graduale
+    });
+}
   showGameOver(totalScore) {
+    this.scrollToTop();
     this.setStatus(`Game over! Total score: ${totalScore}`);
     if (this.nextButton) this.nextButton.disabled = true;
     if(this.playArea) this.playArea.classList.add("hidden")
