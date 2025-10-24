@@ -31,6 +31,9 @@ export async function gameView(root) {
 
             <main class="game-main">
                 <div class="hero-viewport">
+                <div class="logo-image-container">
+                     <img src="src/images/logo.png" alt="GuessThePlace Logo" class="main-logo">
+                 </div>
                     <div class="menu-section hero-actions">
                         <button id="startGameButton" class="hero-btn start">Start new game</button>
                         <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
