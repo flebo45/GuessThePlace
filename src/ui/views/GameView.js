@@ -167,7 +167,10 @@ export async function gameView(root, router, options = {}) {
         uiView.on("onConfirmGuess", () => gameManager.confirmGuess());
         uiView.on("onNextRound", () => gameManager.nextRound());
         mapController.onMapClick((latlng) => gameManager.setTempGuess(latlng));
-        gameManager.startNewGame();
+    gameManager.startNewGame();
+    // Ensure Leaflet recalculates after layout changes
+    setTimeout(() => mapController.invalidateSize(), 0);
+    window.addEventListener('resize', () => mapController.invalidateSize());
     }
 
     async function openScoreboard() {      // come funzione, addEventListener sotto

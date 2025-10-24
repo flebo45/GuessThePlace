@@ -17,8 +17,8 @@ export class UIView {
 
   renderGameUI() {
     this.root.innerHTML = `
-      <div class="play-area">
-        <div class="left-panel">
+      <div class="play-area grid-layout">
+        <div class="top-left">
           <div id="status" class="game-status"></div>
           <div class="photo-container">
             <img id="photoElement" alt="Guess the location" class="game-photo hidden" />
@@ -30,12 +30,16 @@ export class UIView {
           </div>
         </div>
 
-        <div class="right-panel">
-          <div id="map" class="map-panel"></div>
+        <div class="top-right">
           <div class="scoreboard">
             <h3>Round scores</h3>
             <ul id="scoreList" class="score-list"></ul>
+            <div id="gameOverMessage" class="game-over-message hidden"></div>
           </div>
+        </div>
+
+        <div class="map-row">
+          <div id="map" class="map-panel"></div>
         </div>
       </div>
     `;
@@ -47,6 +51,7 @@ export class UIView {
     this.nextButton = this.root.querySelector("#nextRoundBtn");
     this.scoreListEl = this.root.querySelector("#scoreList");
     this.statusElement = this.root.querySelector("#status");
+  this.gameOverEl = this.root.querySelector("#gameOverMessage");
 
     this.confirmButton.addEventListener("click", () => {
       this.handlers.onConfirmGuess?.();
@@ -149,7 +154,11 @@ export class UIView {
 }
   showGameOver(totalScore) {
     this.scrollToTop();
-    this.setStatus(`Game over! Total score: ${totalScore}`);
+    // Show message under the Round scores list
+    if (this.gameOverEl) {
+      this.gameOverEl.textContent = `Game over! Total score: ${totalScore}`;
+      this.gameOverEl.classList.remove('hidden');
+    }
     if (this.nextButton) this.nextButton.disabled = true;
     if(this.playArea) this.playArea.classList.add("hidden")
   }
