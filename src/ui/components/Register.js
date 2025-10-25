@@ -1,7 +1,12 @@
 import { RegisterUserUseCase } from "../../application/usecases/RegisterUser.js";
-import { appState } from "../../application/state/AppState.js";
-import { doc } from "firebase/firestore";
 
+/**
+ * Renders a registration form component inside the given container.
+ * Handles user registration and displays status messages.
+ * 
+ * @param {HTMLElement} container - The container element to render the registration form into.
+ * @returns {HTMLElement} The root element of the registration form component.
+ */
 export function Register(container) {
     const root = document.createElement("div");
 

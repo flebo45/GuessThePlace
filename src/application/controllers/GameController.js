@@ -4,6 +4,9 @@ import { calculateScore } from '../../domain/services/ScoringService.js';
 import { Guess } from '../../domain/entities/Guess.js';
 import { appState } from '../state/AppState.js';
 
+/**
+ * Controller class for managing game-related operations.
+ */
 export class GameController {
   constructor() {
     this.state = appState;

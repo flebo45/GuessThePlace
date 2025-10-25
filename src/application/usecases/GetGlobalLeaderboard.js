@@ -2,11 +2,17 @@ import { GameRepository } from "../../infrastructure/repositories/GameRepository
 import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { LeaderboardEntry } from "../../domain/entities/LeaderboardEntry";
 
+/**
+ * Use case for retrieving the global leaderboard.
+ */
 export const GetGlobalLeaderboard = {
+
   /**
-   * sinceDate: Date
-   * limit: number
-   * returns array of LeaderboardEntry
+   * Retrieves the global leaderboard.
+   * @param {Object} params - The parameters for the request.
+   * @param {Date} params.sinceDate - The date to filter games since.
+   * @param {number} [params.limit=10] - The maximum number of entries to return.
+   * @returns {Promise<Array>} - A promise that resolves to an array of leaderboard entries.
    */
   async execute({ sinceDate, limit = 10 }) {
     const topGames = await GameRepository.getTopGamesSince(sinceDate, limit);

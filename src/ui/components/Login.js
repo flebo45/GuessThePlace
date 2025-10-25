@@ -2,6 +2,13 @@ import { LoginUserUseCase } from "../../application/usecases/LoginUser.js";
 import { LogoutUseCase } from "../../application/usecases/LogoutUser.js";
 import { appState } from "../../application/state/AppState.js";
 
+/**
+ * Renders a login form component inside the given container.
+ * Handles user login and displays status messages.
+ * 
+ * @param {HTMLElement} container - The container element to render the login form into.
+ * @returns {HTMLElement} The root element of the login form component.
+ */
 export function Login(container) {
     const root = document.createElement("div");
     

@@ -1,3 +1,11 @@
+/**
+ * Renders a leaderboard component inside the given container.
+ * @param {HTMLElement} container - The container element to render the leaderboard into.
+ * @param {Object} options - Configuration options for the leaderboard.
+ * @param {string} options.title - The title of the leaderboard.
+ * @param {Array} options.entries - An array of leaderboard entry objects.
+ * @returns {Object} An object with an update method to refresh the leaderboard entries.
+ */
 export function Leaderboard(container, { title = "Leaderboard", entries = [] } = {}) {
   container.innerHTML = `
     <div class="leaderboard">

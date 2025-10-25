@@ -1,3 +1,7 @@
+/**
+ * GameMap component that encapsulates a Leaflet map for the game.
+ * It allows setting guess markers, solution markers, and drawing lines between them.
+ */
 export class GameMap {
   constructor(containerElement) {
     if (!(containerElement instanceof HTMLElement)) {
@@ -40,27 +44,39 @@ export class GameMap {
   }
 
 
+  /**
+   * Sets a callback function to handle map click events.
+   * @param {Function} callback - The function to call when the map is clicked.
+   */
    setOnMapClick(callback) {
     this.onMapClickCallback = callback;
   }
 
   /**
-   * Enable or disable map interaction (clicks).
-   * When disabled, clicks are ignored by the internal handler.
+   * Sets the interactivity of the map.
+   * @param {boolean} enabled - Whether to enable or disable interactivity.
    */
   setInteractive(enabled) {
     this.interactive = !!enabled;
   }
 
+  /**
+   * Enables interaction with the map.
+   */
   enableInteraction() {
     this.setInteractive(true);
   }
 
+  /**
+   * Disables interaction with the map.
+   */
   disableInteraction() {
     this.setInteractive(false);
   }
 
-  
+  /**
+   * Resets the game map to its initial state.
+   */
   reset() {
     if (this.guessMarker) {
       this.map.removeLayer(this.guessMarker);
@@ -76,6 +92,10 @@ export class GameMap {
     }
   }
 
+  /**
+   * Sets the guess marker on the map.
+   * @param {LatLng} latlng - The latitude and longitude to place the guess marker.
+   */
   setGuessMarker(latlng) {
     if (this.guessMarker) {
       this.guessMarker.setLatLng(latlng);
@@ -84,6 +104,10 @@ export class GameMap {
     }
   }
 
+  /**
+   * Shows the solution marker on the map.
+   * @param {LatLng} latlng - The latitude and longitude to place the solution marker.
+   */
   showSolutionMarker(latlng) {
     if (this.solutionMarker) {
       this.solutionMarker.setLatLng(latlng);
@@ -93,7 +117,9 @@ export class GameMap {
     }
   }
 
-
+  /**
+   * Shows the line between the guess and solution markers.
+   */
   showLineBetweenMarkers() {
     if (this.guessMarker && this.solutionMarker) {
       const latlngs = [this.guessMarker.getLatLng(), this.solutionMarker.getLatLng()];

@@ -1,3 +1,6 @@
+/**
+ * UIView class responsible for rendering and managing the game UI.
+ */
 export class UIView {
   constructor(root) {
     this.root = root;
@@ -16,6 +19,9 @@ export class UIView {
     this._scrollTimerId = null;
   }
 
+  /**
+   * Renders the game UI structure inside the root element.
+   */
   renderGameUI() {
     this.root.innerHTML = `
       <div class="play-area grid-layout">
@@ -63,12 +69,20 @@ export class UIView {
     });
   }
 
-  /** Allow controllers to attach logic */
+  /**
+   * Registers event handlers for UI interactions.
+   * @param {string} event - The event name.
+   * @param {Function} callback - The callback function to handle the event.
+   */
   on(event, callback) {
     this.handlers[event] = callback;
   }
 
 
+  /**
+   * Sets the photo URL to display in the game UI.
+   * @param {string} url - The URL of the photo to display.
+   */
   setPhoto(url) {
     if (!this.photoElement) return;
     if (url) {
@@ -80,8 +94,10 @@ export class UIView {
     }
   }
 
-  /** Show a JS-managed loader overlay inside the photo container.
-   * Ensures a minimum visible time to avoid flicker. Safe to call repeatedly.
+  /**
+   * Shows a loading spinner over the photo area.
+   * @param {Object} options - Options for showing the loader.
+   * @param {number} options.minMs - Minimum time in milliseconds to show the loader.
    */
   showLoader({ minMs = 250 } = {}) {
     try {
@@ -101,6 +117,9 @@ export class UIView {
     }
   }
 
+  /**
+   * Hides the loading spinner.
+   */
   hideLoader() {
     try {
       if (!this._loaderEl) return;
@@ -121,24 +140,42 @@ export class UIView {
     }
   }
 
+  /**
+   * Sets the status message in the UI.
+   * @param {string} message - The status message to display.
+   */
   setStatus(message) {
     if (this.statusElement) this.statusElement.textContent = message;
   }
 
-  // loader removed: showLoader/hideLoader are intentionally not present
-
+  /**
+   * Clears the status message in the UI.
+   */
   clearStatus() {
     if (this.statusElement) this.statusElement.textContent = '';
   }
 
+  /**
+   * Enables or disables the confirm button.
+   * @param {boolean} enabled - Whether the button should be enabled.
+   */
   setConfirmEnabled(enabled) {
     if (this.confirmButton) this.confirmButton.disabled = !enabled;
   }
 
+  /**
+   * Shows or hides the next button.
+   * @param {boolean} enabled - Whether the button should be shown.
+   */
   showNextButton(enabled) {
     if (this.nextButton) this.nextButton.disabled = !enabled;
   }
 
+  /**   * Adds a round score entry to the scoreboard.
+   * @param {number} round - The round number.
+   * @param {number} score - The score for the round.
+   * @param {number} distance - The distance in kilometers.
+   */
   addRoundScore(round, score, distance) {
     if (this.scoreListEl) {
       const li = document.createElement('li');
@@ -148,6 +185,9 @@ export class UIView {
     //this.setStatus(`Round ${round}: ${score} points (${distance.toFixed(2)} km)`);
   }
 
+  /**
+   * Scrolls the window to the top after a delay.
+   */
  scrollToTop() {
     // Definisci il tempo di attesa in millisecondi (es: 500ms = mezzo secondo)
     const delayInMilliseconds = 4000; 
@@ -162,6 +202,10 @@ export class UIView {
     }, delayInMilliseconds); // Passa il ritardo qui
 }
 
+  /**
+   * Displays the game over message with the total score.
+   * @param {number} totalScore - The total score achieved in the game.
+   */
   showGameOver(totalScore) {
     this.scrollToTop();
     // Show message below the two buttons, above photo and scoreboard
@@ -174,6 +218,7 @@ export class UIView {
     // Keep play area visible so message remains in view
   }
 
+  /** Resets the UI to the initial state for a new game. */
   reset() {
     if (this.playArea) this.playArea.classList.remove("hidden");
 

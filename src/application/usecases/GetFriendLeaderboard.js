@@ -2,11 +2,18 @@ import { GameRepository } from "../../infrastructure/repositories/GameRepository
 import { UserRepository } from "../../infrastructure/repositories/UserRepository";
 import { LeaderboardEntry } from "../../domain/entities/LeaderboardEntry";
 
+/**
+ * Use case for retrieving the friends' leaderboard.
+ */
 export const GetFriendsLeaderboard = {
+
   /**
-   * currentUser: domain User instance (should expose following collection)
-   * sinceDate: Date
-   * limit: number
+   * Retrieves the friends' leaderboard.
+   * @param {Object} params - The parameters for the request.
+   * @param {Object} params.currentUser - The current user object.
+   * @param {Date} params.sinceDate - The date to filter games since.
+   * @param {number} [params.limit=10] - The maximum number of entries to return.
+   * @returns {Promise<Array>} - A promise that resolves to an array of leaderboard entries.
    */
   async execute({ currentUser, sinceDate, limit = 10 }) {
     if (!currentUser) return [];

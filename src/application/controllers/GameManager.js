@@ -2,6 +2,9 @@ import { SaveGame } from '../usecases/SaveGame.js';
 import { appState } from '../state/AppState.js';
 import { latLng } from 'leaflet';
 
+/**
+ * Manager class that orchestrates game flow between the GameController, GameMapController, and UIView.
+ */
 export class GameManager {
   constructor( { gameController, gameMapController , uiView }) {
     this.gameController = gameController;
@@ -11,17 +14,19 @@ export class GameManager {
     this.tempGuess = null;
   }
 
+  /**
+   * Sets a temporary guess based on the user's click on the map.
+   * @param {Object} latlng - The latitude and longitude of the click event.
+   */
   setTempGuess(latlng) {
     if (this.gameController.isGameOver()) return;
-    // Store only the raw lat/lng for the tentative guess. The domain entity
-    // `Guess` will be created at confirmation to ensure the correct round
-    // number is used. Use the `Guess` entity when the data will be persisted
-    // or passed to domain services (scoring/distance); for transient UI state
-    // plain {lat,lng} objects are acceptable.
     this.tempGuess = { lat: latlng.lat, lng: latlng.lng };
     this.uiView.setConfirmEnabled(true);
   }
 
+  /**
+   * Starts a new game session.
+   */
   async startNewGame() {
     this._resetAllUI();
     // Show loadig notify
@@ -33,11 +38,6 @@ export class GameManager {
       this._updatePhotoUI();
       this.uiView.setStatus('Foto caricate. Inizio partita.');
 
-      // // Check for resize from leafleat
-      // setTimeout(() => {
-      //   this.gameMapController.invalidateSize();
-      //   console.log("Map size invalidated."); // Log 
-      // }, 100); // 100ms è un ritardo di sicurezza
     } catch (err) {
       console.error('Errore startNewGame:', err);
       this.uiView.setStatus('Errore nel recupero delle foto. Riprova.');
@@ -47,12 +47,19 @@ export class GameManager {
     }
   }
 
+  /**
+   * Handles a click event on the map by setting a temporary guess.
+   * @param {Object} latlng - The latitude and longitude of the click event.
+   */
   handleMapClick(latlng) {
     if (this.gameController.isGameOver()) return;
     this.tempGuess = { lat: latLng.lat, lng: latLng.lng};
     this.uiView.setConfirmEnabled(true); 
   } 
 
+  /**
+   * Confirms the user's guess and updates the game state.
+   */
   confirmGuess() {
     if (!this.tempGuess || this.gameController.isGameOver()) return;
 
@@ -78,6 +85,9 @@ export class GameManager {
     this.tempGuess = null;
   }
 
+  /**
+   * Proceeds to the next round or ends the game if it was the last round.
+   */
   async nextRound() {
     const hasNext = this.gameController.nextRound();
     if (!hasNext) return await this._endGame();
@@ -86,6 +96,10 @@ export class GameManager {
     this._updatePhotoUI();
   }
 
+  /**
+   * Ends the current game session and saves the score.
+   * @private
+   */
   async _endGame() {
     const totalScore = this.gameController.getTotalScore();
     const user = appState.user;
@@ -107,17 +121,22 @@ export class GameManager {
     } catch (e) {
       // ignore if DOM not available
     }
-   /*  if (this.gameMapController && typeof this.gameMapController.disableInteraction === 'function') {
-    this.gameMapController.disableInteraction();
-    } */
-   // this._resetAllUI();
   }
 
+  /**
+   * Updates the photo UI with the current photo.
+   * @private
+   */
   _updatePhotoUI() {
     const photo = this.gameController.getCurrentPhoto();
     if (photo) this.uiView.setPhoto(photo.url);
   }
 
+
+  /**
+   * Resets the UI elements for a new round.
+   * @private
+   */
   _resetRoundUI() {
     this.tempGuess = null;
     this.gameMapController.reset();
@@ -128,6 +147,10 @@ export class GameManager {
     this.uiView.showNextButton(false);
   }
 
+  /**
+   * Resets all UI elements for a new game.
+   * @private
+   */
   _resetAllUI() {
     this.tempGuess = null;
     this.gameMapController.reset();

@@ -2,6 +2,12 @@ import { LogoutUseCase } from "../../application/usecases/LogoutUser";
 import { appState } from "../../application/state/AppState.js";
 import { UserRepository } from "../../infrastructure/repositories/UserRepository.js";
 
+/**
+ * Session component that displays the current user's session information.
+ * Shows username, logout button, and friends management if the user is logged in.
+ * @param {HTMLElement} container - The container element to render the Session component into.
+ * @returns {HTMLElement} The root element of the Session component.
+ */
 export function Session(container) {
     const root = document.createElement("div");
     root.id = "sessionComponent";

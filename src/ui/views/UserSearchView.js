@@ -1,8 +1,13 @@
 import { UserSearchComponent } from "../components/UserSearchComponent";
 import { UserView } from "./UserView";
 import { UserController } from "../../application/controllers/UserController";
-import { use } from "react";
 
+/**
+ * Renders the User Search view, allowing users to search for other users
+ * and view their profiles.
+ * 
+ * @param {HTMLElement} root - The root container to render the user search view into.
+ */
 export function UserSearchView(root) {
     const userController = new UserController();
 

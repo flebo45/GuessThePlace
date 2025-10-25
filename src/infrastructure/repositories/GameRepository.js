@@ -14,10 +14,17 @@ import {
 import { db } from "../firebase/firebase-config.js";
 import { Game } from "../../domain/entities/Game.js";
 
-
+/**
+ * Repository class for managing game data in Firestore.
+ */
 export class GameRepository {
     static collectionref = collection(db, "games");
 
+    /**
+     * Saves a game to Firestore.
+     * @param {Game} game - The game instance to save.
+     * @returns {Promise<string>} The ID of the saved game document.
+     */
     static async saveGame(game) {
         const now = Timestamp.now();
         try {
@@ -33,6 +40,11 @@ export class GameRepository {
         }
     }
 
+    /**
+     * Retrieves all games for a specific user.
+     * @param {string} userId - The ID of the user.
+     * @returns {Promise<Array<Game>>} The list of games for the user.
+     */
     static async getGamesByUserId(userId) {
         try{
             const q = query(
@@ -49,7 +61,7 @@ export class GameRepository {
                     data.userId,
                     [], // Rounds can be fetched separately if needed
                     data.totalScore,
-                    new Date(data.date)
+                    (data.date && data.date.toDate) ? data.date.toDate() : new Date(data.date)
                 );
             });
         } catch (error) {
@@ -58,6 +70,12 @@ export class GameRepository {
         }
     }
 
+    /**
+     * Retrieves the top games since a specific date.
+     * @param {Date} sinceDate - The date to filter games.
+     * @param {number} limit - The maximum number of games to retrieve.
+     * @returns {Promise<Array<Object>>} The list of top games.
+     */
     static async getTopGamesSince(sinceDate, limit = 10) {
         const sinceTs = Timestamp.fromDate(sinceDate);
 
@@ -72,7 +90,12 @@ export class GameRepository {
         return snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
     }
 
-
+    /**
+     * Retrieves the top games by specific users since a specific date.
+     * @param {Array<string>} userIds - The list of user IDs.
+     * @param {Date} sinceDate - The date to filter games.
+     * @returns {Promise<Array<Object>>} The list of top games by the specified users.
+     */
     static async getTopGamesByUsersSince(userIds = [], sinceDate) {
         if (!Array.isArray(userIds) || userIds.length === 0) return [];
 

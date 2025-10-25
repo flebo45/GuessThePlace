@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Represents a round in a game, including the truth photo, user's guess, distance, and score.
+ */
 export class Round {
   constructor(roundNumber, truthPhoto = null) {
     this.roundNumber = roundNumber;

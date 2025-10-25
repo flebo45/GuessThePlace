@@ -1,6 +1,12 @@
 import { appState } from "../../application/state/AppState.js";
 import { UserRepository } from "../../infrastructure/repositories/UserRepository.js";
 
+/**
+ * FriendsButton component that displays a button to view and manage followed users.
+ * When clicked, it opens a panel showing the list of users the current user is following,
+ * with options to unfollow them.
+ * @param {HTMLElement} container - The container element to render the FriendsButton into.
+ */
 export function FriendsButton(container) {
     container.innerHTML = `
         <div class="friends-component">

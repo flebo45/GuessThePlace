@@ -27,7 +27,19 @@ import { User } from "../../domain/entities/User.js";
 
 const usersCollection = collection(db, "users");
 
+/**
+ * Repository class for managing user data in Firestore and Firebase Authentication.
+ */
 export const UserRepository = {
+
+    /**
+     * Registers a new user.
+     * @param {Object} param - The user registration details.
+     * @param {string} param.email - The user's email address.
+     * @param {string} param.password - The user's password.
+     * @param {string} param.username - The user's chosen username.
+     * @returns {Promise<User>} The registered user.
+     */
     async register({email, password, username}) {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -40,19 +52,35 @@ export const UserRepository = {
             createdAt: new Date(),
         });
 
-        return User.fromFirebaseUser(user);
+        return new User(user.uid, email, username, []);
     },
 
+    /**
+     * Logs in a user.
+     * @param {Object} param - The login details.
+     * @param {string} param.email - The user's email address.
+     * @param {string} param.password - The user's password.
+     * @returns {Promise<User>} The logged-in user.
+     */
     async login({email, password}) {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = this.getUserById(userCredential.user.uid)
         return user;
     },
-    
+
+    /**
+     * Logs out the current user.
+     * @returns {Promise<void>}
+     */
     async logout() {
         await signOut(auth);
     },
 
+    /**
+     * Retrieves a user by their ID.
+     * @param {string} userId - The ID of the user to retrieve.
+     * @returns {Promise<User|null>} The user object or null if not found.
+     */
     async getUserById(userId) {
         const userDocRef = doc(db, "users", userId);
         const snapshot = await getDoc(userDocRef);
@@ -61,6 +89,11 @@ export const UserRepository = {
         return new User(userId, data.email || null, data.username || null, data.following || []);
     },
 
+    /**
+     * Retrieves multiple users by their IDs.
+     * @param {Array<string>} userIds - The list of user IDs to retrieve.
+     * @returns {Promise<Array<User|null>>} The list of user objects or null for not found.
+     */
     async getUsersByIds(userIds = []) {
         if (!userIds || userIds.length === 0) return [];
         const results = [];
@@ -75,6 +108,11 @@ export const UserRepository = {
         return results;
     },
 
+    /**
+     * Retrieves a user by their username.
+     * @param {string} username - The username of the user to retrieve.
+     * @returns {Promise<User|null>} The user object or null if not found.
+     */
     async getUserFromUsername(username) {
         if (!username) return null;
 
@@ -90,6 +128,12 @@ export const UserRepository = {
         }
     },
 
+    /**
+     * Searches for users by a username prefix.
+     * @param {string} prefix - The username prefix to search for.
+     * @param {number} limit - The maximum number of results to return.
+     * @returns {Promise<Array<User>>} The list of matching users.
+     */
     async findByUsernamePrefix(prefix, limit = 10) {
         if (!prefix) return [];
 
@@ -116,6 +160,12 @@ export const UserRepository = {
         }
     },
 
+    /**
+     * Follows a user.
+     * @param {string} currentUserId - The ID of the current user.
+     * @param {string} targetUserId - The ID of the user to follow.
+     * @returns {Promise<void>}
+     */
     async followUser(currentUserId, targetUserId) {
         const userDocRef = doc(db, "users", currentUserId);
         await updateDoc(userDocRef, {
@@ -123,6 +173,12 @@ export const UserRepository = {
         });
     },
     
+    /**
+     * Unfollows a user.
+     * @param {string} currentUserId - The ID of the current user.
+     * @param {string} targetUserId - The ID of the user to unfollow.
+     * @returns {Promise<void>}
+     */
     async unfollowUser(currentUserId, targetUserId) {
         const userDocRef = doc(db, "users", currentUserId);
         await updateDoc(userDocRef, {
@@ -130,6 +186,10 @@ export const UserRepository = {
         });
     },
 
+    /**
+     * Listens for authentication state changes.
+     * @param {function} callback - The callback function to execute on auth state change.
+     */
     onAuthStateChanged(callback) {
         onAuthStateChanged(auth, async (firebaseUser) => {
             if (!firebaseUser) return callback(null);

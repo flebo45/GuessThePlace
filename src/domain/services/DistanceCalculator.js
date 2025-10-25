@@ -1,9 +1,13 @@
-// src/domain/services/DistanceCalculator.js
-
+/**
+ * Calculates the distance between a guessed location and the actual photo location using the Haversine formula.
+ * @param {Object} guess - The guessed location with 'lat' and 'lng' properties.
+ * @param {Object} photo - The actual photo location with 'lat' and 'lng' properties.
+ * @returns {number} - The distance in kilometers.
+ */
 export function calculateDistance(guess, photo) {
   const toRad = val => (val * Math.PI) / 180;
 
-  const R = 6371; // Raggio Terra in km
+  const R = 6371; // Radius of the Earth in km
   const dLat = toRad(photo.lat - guess.lat);
   const dLon = toRad(photo.lng - guess.lng);
   const lat1 = toRad(guess.lat);
@@ -18,7 +22,7 @@ export function calculateDistance(guess, photo) {
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c; // distanza in km
+  return R * c; // distance in km
 }
 
 

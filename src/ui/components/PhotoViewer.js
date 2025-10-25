@@ -1,10 +1,16 @@
-// src/ui/components/PhotoViewer.js
-
+/**
+ * PhotoViewer component to display photos.
+ * @class
+ */
 export class PhotoViewer {
   constructor(container) {
     this.container = container;
   }
 
+  /**
+   * Sets the photo URL to display.
+   * @param {string} url - The URL of the photo to display.
+   */
   setPhoto(url) {
     // Clear container first
     this.container.innerHTML = '';

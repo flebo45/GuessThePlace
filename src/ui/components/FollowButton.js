@@ -1,3 +1,7 @@
+/**
+ * FollowButton component allows users to follow or unfollow another user.
+ * It interacts with the UserController to manage follow state.
+ */
 export class FollowButton {
     constructor(container, userController, targetId) {
         this.container = container;
@@ -9,6 +13,9 @@ export class FollowButton {
         this.loading = false;
     }
 
+    /**
+     * Renders the follow button and sets up event listeners.
+     */
     async render() {
         this.container.innerHTML = "";
         this.button = document.createElement("button");
@@ -24,6 +31,9 @@ export class FollowButton {
         this.container.appendChild(this.button);
     }
 
+    /**
+     * Handles the click event on the follow button.
+     */
     async _onClick() {
         if (this.loading) return;
         this.loading = true;

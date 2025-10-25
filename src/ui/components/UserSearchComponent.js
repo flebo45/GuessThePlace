@@ -1,5 +1,14 @@
 import { UserController } from "../../application/controllers/UserController";
 
+/**
+ * UserSearchComponent allows searching for users by name prefix.
+ * Renders a search input and displays matching user results.
+ * 
+ * @param {HTMLElement} container - The container element to render the component into.
+ * @param {Object} options - Configuration options for the component.
+ * @param {Function} options.onSelect - Callback function when a user is selected.
+ * @returns {Object} An object with a destroy method to clean up the component.
+ */
 export function UserSearchComponent(container, { onSelect} = {}) {
     container.innerHTML = `
         <div class="user-search">

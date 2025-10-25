@@ -1,6 +1,12 @@
 import { Leaderboard } from "../components/Leaderboard";
 import { LeaderboardController } from "../../application/controllers/LeaderboardController";
 
+/**
+ * Renders the Leaderboard view with global and friends leaderboards.
+ * Fetches leaderboard data and populates the view.
+ * 
+ * @param {HTMLElement} root - The root container to render the leaderboard view into.
+ */
 export async function LeaderboardView(root) {
   root.innerHTML = `
     <div class="leaderboard-page">

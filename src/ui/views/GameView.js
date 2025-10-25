@@ -1,5 +1,3 @@
-// file: GameView.js
-
 import { Session } from "../components/Session";
 import { GameManager } from "../../application/controllers/GameManager.js";
 import { GameController } from "../../application/controllers/GameController.js";
@@ -8,6 +6,15 @@ import { UIView } from "./UIViews.js";
 import { UserController } from "../../application/controllers/UserController.js";
 import { LeaderboardView } from "./LeaderboardView.js";
 
+/**
+ * Renders the main game view including header, menu, and game container.
+ * Handles user interactions for starting games and viewing leaderboards.
+ * 
+ * @param {HTMLElement} root - The root container to render the game view into.
+ * @param {Object} router - The router instance for navigation.
+ * @param {Object} options - Additional options for rendering the view.
+ * @param {string} options.mode - The mode to render ('home', 'play', 'scoreboard').
+ */
 export async function gameView(root, router, options = {}) {
     const mode = options.mode || 'home';
     // Ensure only the game body class is active

@@ -1,6 +1,8 @@
 'use strict';
 
-// src/domain/entities/Photo.js
+/**
+ * Represents a photo with its URL and geographical coordinates.
+ */
 export class Photo {
   constructor(url, lat, lng) {
     this.url = url;

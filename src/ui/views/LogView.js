@@ -1,8 +1,15 @@
 import { Login } from "../components/Login.js";
 import { Register } from "../components/Register.js";
 
-// initialTab: 'login' | 'register'
-// router (optional): if provided, switches URL to /login or /register on tab buttons
+/**
+ * Renders the log view with login and registration options.
+ * Allows switching between login and registration forms.
+ * 
+ * @param {HTMLElement} container - The container element to render the log view into.
+ * @param {string} [initialTab='login'] - The initial tab to display ('login' or 'register').
+ * @param {Object} [router] - Optional router for navigation.
+ * @returns {void}
+ */
 export function logView(container, initialTab = 'login', router) {  //aggiunto inizialTab e router come parametro opzionale
     // Ensure only the auth page body class is active
     document.body.classList.remove("body");

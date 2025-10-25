@@ -1,12 +1,19 @@
 import { UserHeader } from "../components/UserHeader";
 import { GameHistory } from "../components/GameHistory";
 
+/**
+ * UserView class to display user profile and game history.
+ */
 export class UserView {
     constructor(container, userController) {
         this.container = container;
         this.userController = userController;
     }
 
+    /**
+     * Renders the user profile and game history.
+     * @param {string} userId - The ID of the user to display.
+     */
     async render(userId) {
         this.container.innerHTML = "";
 

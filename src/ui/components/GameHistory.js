@@ -1,9 +1,16 @@
+/**
+ * GameHistory component displays the history of games played by the user.
+ * It shows a list of past games with their scores and dates.
+ */
 export class GameHistory {
     constructor(container, games) {
         this.container = container;
         this.games = games;
     }
 
+    /**
+     * Renders the game history.
+     */
     render() {
         const historyDiv = document.createElement("div");
         historyDiv.className = "game-history";

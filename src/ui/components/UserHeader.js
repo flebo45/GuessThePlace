@@ -1,5 +1,9 @@
 import { FollowButton } from "./FollowButton";
 
+/**
+ * UserHeader component to display user's header information.
+ * @class
+ */
 export class UserHeader {
     constructor(container, user, userController) {
         this.container = container;
@@ -10,6 +14,10 @@ export class UserHeader {
         this.followButtonComponent = null;
     }
 
+    /**
+     * Renders the user header component.
+     * @returns {Promise<void>}
+     */
     async render() {
         this.headerDiv = document.createElement("div");
         this.headerDiv.className = "user-header";
