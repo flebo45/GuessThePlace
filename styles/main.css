@@ -247,11 +247,9 @@ img { max-width: 100%; display: block; }
 }
 @keyframes gameOverGlow {
   0%, 100% {
-    transform: scale(1);
     text-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent);
   }
   50% {
-    transform: scale(1.1);
     text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent), 0 0 30px var(--accent);
   }
 }
