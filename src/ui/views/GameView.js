@@ -5,228 +5,226 @@ import { GameMapController } from "../../application/controllers/GameMapControll
 import { UIView } from "./UIViews.js";
 import { UserController } from "../../application/controllers/UserController.js";
 import { LeaderboardView } from "./LeaderboardView.js";
+// Assicurati che bootstrap sia disponibile globalmente o importa l'oggetto Modal se necessario
+// import { Modal } from 'bootstrap'; // Esempio se usi npm
 
 /**
- * Renders the main game view including header, menu, and game container.
- * Handles user interactions for starting games and viewing leaderboards.
- * 
- * @param {HTMLElement} root - The root container to render the game view into.
- * @param {Object} router - The router instance for navigation.
- * @param {Object} options - Additional options for rendering the view.
- * @param {string} options.mode - The mode to render ('home', 'play', 'scoreboard').
+ * Renders the main game view using Bootstrap layout and components.
+ * Handles routing when the leaderboard modal is closed and ensures backdrop removal.
  */
 export async function gameView(root, router, options = {}) {
     const mode = options.mode || 'home';
-    // Ensure only the game body class is active
-    document.body.classList.remove("login-register-body");
-    document.body.classList.add("body");
-        root.innerHTML = `
-                    <header class="game-header">
-                <div class="title-box"><h2>Guess The Place</h2></div>
+    // Ensure correct body class
+    document.body.className = 'body d-flex flex-column min-vh-100'; // Usa flex per layout
 
-                <div class="header-right">
-                    <div class="search-wrapper">
-                        <div class="menu-section search-bar">
-                            <input type="text" id="userSearchInput" placeholder="Search user by username..." class="menu-input" autocomplete="off">
-                            <button id="searchButton" class="menu-button">Search</button>
-                        </div>
-                        <div id="searchResults" class="menu-section search-results"></div>
-                    </div>
-
+    root.innerHTML = `
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: var(--card);">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/game">Guess The Place</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavGame" aria-controls="navbarNavGame" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavGame">
+            <div class="navbar-nav align-items-center">
+                 <div class="nav-item dropdown me-3 search-wrapper">
+                    <input type="text" id="userSearchInput" class="form-control form-control-sm dropdown-toggle" placeholder="Search user..."
+                           autocomplete="off" data-bs-toggle="dropdown" aria-expanded="false">
+                    <ul id="searchResults" class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userSearchInput">
+                         <li><p class="dropdown-header px-3 pt-1 pb-0">Start typing to search...</p></li>
+                    </ul>
+                 </div>
+                 <div class="nav-item">
                     <div id="sessionContainer"></div>
-                </div>
-                </header>
-        <div class="game-menu-container">
-
-
-            <main class="game-main">
-                <div class="hero-viewport">
-                    <div class="menu-section hero-actions">
-                        <button id="startGameButton" class="hero-btn start">Start new game</button>
-                        <button id="leaderboardButton" class="hero-btn score">Scoreboard</button>
-                    </div>
-                </div>
-
-                <div id="gameContainer" class="hidden"></div>
-                <div id="leaderboardContainer" class="hidden"></div>
-            </main>
+                 </div>
+            </div>
         </div>
-        `;
+      </div>
+    </nav>
 
+    <div class="container-fluid mt-5 pt-3 flex-grow-1">
+        <main class="game-main h-100">
+            <div class="hero-viewport text-center my-5 py-5 ${mode !== 'home' ? 'd-none' : ''}">
+                <div class="hero-actions">
+                    <button id="startGameButton" class="btn btn-success btn-lg mx-2">
+                        <i class="bi bi-play-circle-fill me-2"></i>Start new game
+                    </button>
+                    <button id="leaderboardButton" class="btn btn-warning btn-lg mx-2" data-bs-toggle="modal" data-bs-target="#leaderboardModal">
+                        <i class="bi bi-trophy-fill me-2"></i>Scoreboard
+                    </button>
+                </div>
+            </div>
 
+            <div id="gameContainer" class="${mode !== 'play' ? 'd-none' : ''}"></div>
+        </main>
+    </div>
+    `; // Chiusura div container-fluid e main
+
+    // Initialize Session Component
     const sessionContainer = root.querySelector("#sessionContainer");
-    Session(sessionContainer);
+    Session(sessionContainer); // Session ora gestisce il modal amici
 
+    // --- Inizio Logica di Ricerca (Invariata come prima) ---
     const searchInput = root.querySelector("#userSearchInput");
-    const searchButton = root.querySelector("#searchButton");
-    const startGameButton = root.querySelector("#startGameButton");
-    const leaderboardButton = root.querySelector("#leaderboardButton");
     const searchResultsDiv = root.querySelector("#searchResults");
-    const gameContainer = root.querySelector("#gameContainer");
-
     let debounceTimer;
-    const userController = UserController;
+    const userController = UserController; // Assicurati sia importato
 
     function renderResults(users) {
         if (!users || users.length === 0) {
-            searchResultsDiv.innerHTML = "<p>No users found.</p>";
+            searchResultsDiv.innerHTML = '<li><p class="dropdown-item text-muted disabled">No users found.</p></li>';
             return;
         }
-        searchResultsDiv.innerHTML = "";
+        searchResultsDiv.innerHTML = ""; // Clear previous results or placeholder
         users.forEach((user) => {
             const id = user.getId ? user.getId() : user.id;
             const username = user.getUsername ? user.getUsername() : user.username;
-            const userDiv = document.createElement("div");
-            userDiv.className = "search-result-item";
-            userDiv.dataset.userId = id;
-            userDiv.dataset.username = username;
 
-            const nameBox = document.createElement('div');
-            nameBox.className = 'user-name-box';
-            nameBox.textContent = username;
-
-            userDiv.appendChild(nameBox);
-            searchResultsDiv.appendChild(userDiv);
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.className = "dropdown-item search-result-item";
+            a.href = "#"; // Prevent page reload
+            a.dataset.userId = id;
+            a.dataset.username = username;
+            a.textContent = username;
+            li.appendChild(a);
+            searchResultsDiv.appendChild(li);
         });
     }
 
     async function performSearch(prefix) {
-        if (!prefix) {
-            searchResultsDiv.innerHTML = "<p>Please enter a username prefix to search.</p>";
+        if (!prefix || prefix.length < 1) { // Riduci soglia per iniziare ricerca
+            searchResultsDiv.innerHTML = '<li><p class="dropdown-header px-3 pt-1 pb-0">Start typing to search...</p></li>';
             return;
         }
-        searchResultsDiv.innerHTML = "<p>Searching...</p>";
+        searchResultsDiv.innerHTML = '<li><p class="dropdown-item text-muted disabled">Searching...</p></li>';
         try {
-            const { SearchUser } = await import("../../application/usecases/SearchUser.js");
-            const results = await SearchUser.byUsernamePrefix(prefix, 10);
+            const results = await userController.searchPrefix(prefix, 10);
             renderResults(results);
         } catch (error) {
             console.error("Error during user search:", error);
-            searchResultsDiv.innerHTML = `<p class="error">Error searching users: ${error.message}</p>`;
+            searchResultsDiv.innerHTML = `<li><p class="dropdown-item text-danger disabled">Error: ${error.message}</p></li>`;
         }
     }
 
-    searchInput.addEventListener("input", () => {
+     searchInput.addEventListener("input", () => {
         const prefix = searchInput.value.trim();
         clearTimeout(debounceTimer);
+        var dropdown = bootstrap.Dropdown.getInstance(searchInput) || new bootstrap.Dropdown(searchInput);
+        dropdown.show();
         debounceTimer = setTimeout(() => performSearch(prefix), 300);
     });
 
-    searchButton.addEventListener("click", () => {
-        const prefix = searchInput.value.trim();
-        performSearch(prefix);
-    });
-
-    // Clicking anywhere outside the search area cancels the search and hides results
-    document.addEventListener('click', (event) => {
-        const clickedInsideSearch = !!event.target.closest('.search-wrapper');
-        if (!clickedInsideSearch) {
-            // clear input and results
-            if (searchInput.value && searchInput.value.trim() !== '') {
-                searchInput.value = '';
-            }
-            if (searchResultsDiv && searchResultsDiv.innerHTML.trim() !== '') {
-                searchResultsDiv.innerHTML = '';
-            }
-        }
-    });
-
     searchResultsDiv.addEventListener("click", async (event) => {
+        event.preventDefault();
         const userItem = event.target.closest(".search-result-item");
         if (!userItem) return;
-        const selectedUserId = userItem.dataset.userId;
+        
+        event.stopPropagation();
 
-        // Render profile inside the searchResults dropdown
-        let profileSlot = searchResultsDiv.querySelector('#searchProfile');
+        const selectedUserId = userItem.dataset.userId;
+        let profileSlot = searchResultsDiv.querySelector('.search-profile-slot');
         if (!profileSlot) {
-            profileSlot = document.createElement('div');
-            profileSlot.id = 'searchProfile';
-            profileSlot.className = 'search-profile card';
+            const divider = document.createElement('li');
+            divider.innerHTML = '<hr class="dropdown-divider">';
+            searchResultsDiv.appendChild(divider);
+            profileSlot = document.createElement('li');
+            profileSlot.className = 'search-profile-slot p-2';
             searchResultsDiv.appendChild(profileSlot);
         }
-
-        profileSlot.innerHTML = '<p>Loading profile...</p>';
+        profileSlot.innerHTML = '<div class="text-center text-muted">Loading profile...</div>';
         try {
-            const { UserView } = await import("../views/UserView.js");
+            const { UserView } = await import("./UserView.js");
             const userView = new UserView(profileSlot, userController);
             await userView.render(selectedUserId);
-            // Ensure the newly rendered profile is visible inside the dropdown
-            profileSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } catch (err) {
             console.error("Error rendering user profile:", err);
-            profileSlot.innerHTML = `<div class="error">Error loading user profile.</div>`;
+            profileSlot.innerHTML = `<div class="alert alert-danger alert-sm m-0">Error loading profile.</div>`;
         }
+        event.stopPropagation();
     });
 
-    function startPlay() {                    // come funzione, addEventListener sotto
-        gameContainer.classList.remove("hidden");
-        const heroActions = root.querySelector('.hero-actions');
-        if (heroActions) heroActions.classList.add('hidden');
-        const searchBar = root.querySelector('.search-bar');
-        if (searchBar) searchBar.classList.add('hidden');
+    document.addEventListener('click', (event) => {
+        const clickedInsideSearch = event.target.closest('.search-wrapper');
+        const isSearchInput = event.target === searchInput;
+        if (!clickedInsideSearch && !isSearchInput) {
+            var dropdown = bootstrap.Dropdown.getInstance(searchInput);
+            if (dropdown && searchResultsDiv.classList.contains('show')) {
+                dropdown.hide();
+                searchResultsDiv.innerHTML = '<li><p class="dropdown-header px-3 pt-1 pb-0">Start typing to search...</p></li>';
+            }
+        }
+    });
+    // --- Fine Logica di Ricerca ---
 
+    // --- Inizio Logica di Gioco e Scoreboard ---
+    const startGameButton = root.querySelector("#startGameButton");
+    const leaderboardButton = root.querySelector("#leaderboardButton"); // Bottone che triggera il modal
+    const gameContainer = root.querySelector("#gameContainer");
+    const heroActionsDiv = root.querySelector('.hero-viewport');
+
+    function startPlay() {
+        gameContainer.classList.remove("d-none");
+        heroActionsDiv.classList.add('d-none');
         const uiView = new UIView(gameContainer);
         uiView.renderGameUI();
         const gameController = new GameController();
         const mapController = new GameMapController(uiView.getMapContainerId());
         const gameManager = new GameManager({ gameController, gameMapController: mapController, uiView });
-
         uiView.on("onConfirmGuess", () => gameManager.confirmGuess());
         uiView.on("onNextRound", () => gameManager.nextRound());
         mapController.onMapClick((latlng) => gameManager.setTempGuess(latlng));
-    gameManager.startNewGame();
-    // Ensure Leaflet recalculates after layout changes
-    setTimeout(() => mapController.invalidateSize(), 0);
-    window.addEventListener('resize', () => mapController.invalidateSize());
+        gameManager.startNewGame();
+        setTimeout(() => mapController.invalidateSize(), 100);
+        window.addEventListener('resize', () => mapController.invalidateSize());
     }
 
-    async function openScoreboard() {      // come funzione, addEventListener sotto
-        const overlay = document.createElement('div');
-        overlay.className = 'leaderboard-overlay';
+    async function loadScoreboardData() {
+        const modalElement = document.getElementById('leaderboardModal');
+        if (!modalElement) return; // Se il modal non è nel DOM, esci
+        const modalBody = modalElement.querySelector('#leaderboardModalBody');
+        const modalFooter = modalElement.querySelector('.modal-footer');
 
-        const panel = document.createElement('div');
-        panel.className = 'leaderboard-panel card';
+        modalBody.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
 
-        const header = document.createElement('div');
-        header.className = 'leaderboard-header';
-
-        const h3 = document.createElement('h3');
-        h3.textContent = 'Leaderboards';
-        header.appendChild(h3);
-
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'leaderboard-refresh';
-        closeBtn.textContent = 'Close';
-        closeBtn.addEventListener('click', () => {
-            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-            // return to /game on close if we are on /game/scoreboard
-            if (router && window.location.pathname.endsWith('/scoreboard')) {   //aggiunti i due if
-                router.navigate('/game', { replace: true });
-            }
-        });
-        header.appendChild(closeBtn);
-
-        panel.appendChild(header);
-
-        const slot = document.createElement('div');
-        slot.id = 'leaderboardSlot';
-        slot.className = 'leaderboard-slot';
-        slot.textContent = 'Loading...';
-        panel.appendChild(slot);
-
-        overlay.appendChild(panel);
-        document.body.appendChild(overlay);
+        const oldRefreshBtn = modalFooter.querySelector('#leaderboardRefreshBtn');
+        if (oldRefreshBtn) {
+            modalFooter.removeChild(oldRefreshBtn);
+        }
 
         try {
-            await LeaderboardView(slot);
+            await LeaderboardView(modalBody, modalFooter);
         } catch (err) {
             console.error('Error rendering leaderboard view:', err);
-            slot.innerHTML = '<div class="error">Unable to load leaderboard.</div>';
+            modalBody.innerHTML = '<div class="alert alert-danger">Unable to load leaderboard.</div>';
         }
     }
 
-    // Wire buttons to routes per collegare le azioni dei bottoni alle rotte e alle funzioni
-    startGameButton.addEventListener("click", () => {  
+    // Aggiungi il listener per l'evento 'hidden.bs.modal' UNA SOLA VOLTA
+    const leaderboardModalElement = document.getElementById('leaderboardModal');
+    if (leaderboardModalElement && !leaderboardModalElement.dataset.listenerAttached) {
+        leaderboardModalElement.addEventListener('hidden.bs.modal', () => {
+            // console.log("Modal hidden, current path:", window.location.pathname); // Debug
+            if (router && window.location.pathname === '/game/scoreboard') {
+                // console.log("Navigating back to /game"); // Debug
+                router.navigate('/game', { replace: true });
+            }
+            // *** NUOVA PARTE: Rimuovi manualmente il backdrop se ancora presente ***
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                // console.log("Removing lingering backdrop"); // Debug
+                backdrop.parentNode.removeChild(backdrop);
+                // Potrebbe essere necessario ripristinare lo scroll sul body se bloccato
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                 document.body.classList.remove('modal-open');
+            }
+             // *** FINE NUOVA PARTE ***
+        });
+        leaderboardModalElement.dataset.listenerAttached = 'true';
+    }
+
+    // Button listeners
+    startGameButton.addEventListener("click", () => {
         if (router) {
             router.navigate('/game/play');
         } else {
@@ -235,17 +233,37 @@ export async function gameView(root, router, options = {}) {
     });
 
     leaderboardButton.addEventListener("click", async () => {
-        if (router) {
+        if (router && window.location.pathname !== '/game/scoreboard') {
             router.navigate('/game/scoreboard');
-        } else {
-            await openScoreboard();
         }
+        // Il caricamento dati ora avviene SOLO quando il modal sta per essere mostrato
+        // await loadScoreboardData(); // Rimosso da qui
     });
+
+     // NUOVO: Listener per caricare i dati quando il modal sta per essere mostrato
+     if (leaderboardModalElement) {
+        leaderboardModalElement.addEventListener('show.bs.modal', async () => {
+            await loadScoreboardData();
+        });
+     }
+
 
     // Auto-apply mode on initial render
     if (mode === 'play') {
         startPlay();
     } else if (mode === 'scoreboard') {
-        await openScoreboard();
+        const modalElement = document.getElementById('leaderboardModal');
+        if (modalElement) {
+             // Inizializza e mostra il modal se non è già gestito da show.bs.modal
+             const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+             if (!modalElement.classList.contains('show')) {
+                 modal.show();
+                 // loadScoreboardData verrà chiamato dall'evento 'show.bs.modal'
+             } else {
+                // Se è già show (magari da un refresh pagina), carica i dati
+                 await loadScoreboardData();
+             }
+        }
     }
+    // --- Fine Logica di Gioco e Scoreboard ---
 }

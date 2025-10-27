@@ -2,71 +2,87 @@ import { Leaderboard } from "../components/Leaderboard";
 import { LeaderboardController } from "../../application/controllers/LeaderboardController";
 
 /**
- * Renders the Leaderboard view with global and friends leaderboards.
- * Fetches leaderboard data and populates the view.
- * 
- * @param {HTMLElement} root - The root container to render the leaderboard view into.
+ * Renders the Leaderboard content within a Bootstrap modal body.
+ * Fetches data and populates using the Leaderboard component.
+ *
+ * @param {HTMLElement} modalBody - The modal body element to render into.
+ * @param {HTMLElement} modalFooter - The modal footer element to add refresh button.
  */
-export async function LeaderboardView(root) {
-  root.innerHTML = `
+export async function LeaderboardView(modalBody, modalFooter) {
+  // Pulisci il body del modal prima di aggiungere nuovo contenuto
+  modalBody.innerHTML = `
     <div class="leaderboard-page">
-      <h2>Leaderboards</h2>
-      <div class="leaderboards-grid">
-        <div id="globalLeaderboard" class="leaderboard-slot"></div>
-        <div id="friendsLeaderboard" class="leaderboard-slot"></div>
+      <div class="row gy-3"> 
+        <div class="col-md-6">
+          <div id="globalLeaderboard" class="leaderboard-slot"></div>
+        </div>
+        <div class="col-md-6">
+          <div id="friendsLeaderboard" class="leaderboard-slot"></div>
+        </div>
       </div>
-      <div class="leaderboard-footer" style="display:flex;justify-content:flex-end;margin-top:12px"></div>
     </div>
   `;
 
-  const globalSlot = root.querySelector("#globalLeaderboard");
-  const friendsSlot = root.querySelector("#friendsLeaderboard");
+  const globalSlot = modalBody.querySelector("#globalLeaderboard");
+  const friendsSlot = modalBody.querySelector("#friendsLeaderboard");
 
-  // initial placeholders
-  const globalComp = Leaderboard(globalSlot, { title: "Global - top 10 (last 7 days)", entries: [] });
-  const friendsComp = Leaderboard(friendsSlot, { title: "Friends - friend's top game (last 7 days)", entries: [] });
+  // Inizializza componenti Leaderboard (ora usano list-group)
+  const globalComp = Leaderboard(globalSlot, { title: "Global Top 10 (Last 7 Days)" });
+  const friendsComp = Leaderboard(friendsSlot, { title: "Friends' Best (Last 7 Days)" });
 
-  // compute since date = now - 7 days
-  const sinceDate = new Date();
-  sinceDate.setDate(sinceDate.getDate() - 7);
+  // Funzione per caricare/aggiornare i dati
+  async function loadData() {
+    // Mostra uno stato di caricamento semplice
+    globalComp.update([]); // Pulisci
+    friendsComp.update([]);
+     globalSlot.querySelector('.leaderboard-list').innerHTML = '<li class="list-group-item text-muted text-center">Loading...</li>';
+     friendsSlot.querySelector('.leaderboard-list').innerHTML = '<li class="list-group-item text-muted text-center">Loading...</li>';
 
-  // fetch and populate
-  try {
-    const [globalEntries, friendsEntries] = await Promise.all([
-      LeaderboardController.getGlobal(sinceDate, 10),
-      LeaderboardController.getFriends(sinceDate, 10)
-    ]);
 
-    globalComp.update(globalEntries);
-    friendsComp.update(friendsEntries);
-  } catch (err) {
-    console.error("Error loading leaderboards:", err);
-    globalSlot.innerHTML = "<div class='error'>Unable to load global leaderboard</div>";
-    friendsSlot.innerHTML = "<div class='error'>Unable to load friends leaderboard</div>";
+    // Calcola data
+    const sinceDate = new Date();
+    sinceDate.setDate(sinceDate.getDate() - 7);
+
+    try {
+      const [globalEntries, friendsEntries] = await Promise.all([
+        LeaderboardController.getGlobal(sinceDate, 10),
+        LeaderboardController.getFriends(sinceDate, 10) // Assumi che gestisca utente non loggato restituendo []
+      ]);
+
+      globalComp.update(globalEntries);
+      friendsComp.update(friendsEntries);
+
+    } catch (err) {
+      console.error("Error loading leaderboards:", err);
+       globalSlot.querySelector('.leaderboard-list').innerHTML = "<li class='list-group-item text-danger text-center'>Error loading global data</li>";
+       friendsSlot.querySelector('.leaderboard-list').innerHTML = "<li class='list-group-item text-danger text-center'>Error loading friends data</li>";
+    }
   }
 
-  // Add a "Refresh" button in the footer
-  const refreshBtn = document.createElement("button");
-  refreshBtn.textContent = "Refresh";
-  refreshBtn.className = 'leaderboard-refresh';
-  const footer = root.querySelector('.leaderboard-footer');
-  if (footer) footer.appendChild(refreshBtn);
-  refreshBtn.addEventListener("click", async () => {
-    refreshBtn.disabled = true;
-    try {
-      const [g, f] = await Promise.all([
-        LeaderboardController.getGlobal(sinceDate, 10),
-        LeaderboardController.getFriends(sinceDate, 10)
-      ]);
-      globalComp.update(g);
-      friendsComp.update(f);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      refreshBtn.disabled = false;
-    }
-  });
+  // Aggiungi bottone Refresh al footer del modal (se non esiste già)
+   let refreshBtn = modalFooter.querySelector('#leaderboardRefreshBtn');
+   if (!refreshBtn) {
+       refreshBtn = document.createElement("button");
+       refreshBtn.id = 'leaderboardRefreshBtn';
+       refreshBtn.textContent = "Refresh";
+       refreshBtn.className = 'btn btn-primary'; // Stile bottone primario
+       refreshBtn.addEventListener("click", async () => {
+           refreshBtn.disabled = true;
+           refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Refreshing...';
+           await loadData(); // Ricarica i dati
+           refreshBtn.disabled = false;
+           refreshBtn.textContent = "Refresh";
+       });
+       // Inserisci prima del bottone "Close" se esiste
+       const closeButton = modalFooter.querySelector('[data-bs-dismiss="modal"]');
+       if (closeButton) {
+           modalFooter.insertBefore(refreshBtn, closeButton);
+       } else {
+            modalFooter.appendChild(refreshBtn);
+       }
+   }
 
-  // ensure the view is visible
-  root.classList.remove("hidden");
+
+  // Carica i dati iniziali
+  await loadData();
 }
