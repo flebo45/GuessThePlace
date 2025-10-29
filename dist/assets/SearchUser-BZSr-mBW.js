@@ -1,1 +1,0 @@
-import{U as e}from"./index-DnfhNz33.js";const a={async byUsernameExtract(r){return!r||typeof r!="string"?[]:await e.getUserByUsername(r.toLowerCase())},async byUsernamePrefix(r,t=10){return!r||typeof r!="string"?[]:await e.findByUsernamePrefix(r.toLowerCase(),t)}};export{a as SearchUser};

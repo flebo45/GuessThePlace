@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    # Attiva il motore di riscrittura URL
+    RewriteEngine On
+
+    # Imposta la cartella base del tuo sito.
+    # Se il tuo sito è nella root (es. tuonome.altervista.org), usa /
+    RewriteBase /
+    # Se è in una sottocartella (es. ...org/mioprogetto/), usa /mioprogetto/
+    # RewriteBase /mioprogetto/
+
+    # Intestazioni CORS (Opzionali, ma le avevi già e non fanno male)
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    </IfModule>
+
+    # --- REGOLA CHIAVE PER LA TUA SPA ---
+    # Se la richiesta NON è per un file che esiste realmente sul server...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    # E NON è per una cartella che esiste realmente...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # ...allora reindirizza internamente la richiesta al tuo file index.html
+    # Il router in main.js leggerà l'URL e mostrerà la vista corretta.
+    RewriteRule ^(.*)$ index.html [QSA,L]
+    # ------------------------------------
+
+    # Forza la connessione in HTTPS (Buona pratica, mantienila)
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+</IfModule>
