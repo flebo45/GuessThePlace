@@ -26,21 +26,35 @@ export function logView(container, initialTab = 'login', router) {
     const showLogin = () => {
         main.innerHTML = "";
         Login(main); // Il componente Login ora usa classi Bootstrap
-        loginBtn.classList.add('active'); // Opzionale: evidenzia bottone attivo
-        registerBtn.classList.remove('active');
+        
+        // --- MODIFICA RICHIESTA ---
+        // Imposta Login come primario (colorato) e Register come secondario
+        loginBtn.classList.add('btn-primary');
+        loginBtn.classList.remove('btn-secondary');
+        
+        registerBtn.classList.add('btn-secondary');
+        registerBtn.classList.remove('btn-primary');
+        // --- FINE MODIFICA ---
     };
 
     const showRegister = () => {
         main.innerHTML = "";
         Register(main); // Il componente Register ora usa classi Bootstrap
-        registerBtn.classList.add('active'); // Opzionale: evidenzia bottone attivo
-        loginBtn.classList.remove('active');
+        
+        // --- MODIFICA RICHIESTA ---
+        // Imposta Register come primario (colorato) e Login come secondario
+        registerBtn.classList.add('btn-primary');
+        registerBtn.classList.remove('btn-secondary');
+
+        loginBtn.classList.add('btn-secondary');
+        loginBtn.classList.remove('btn-primary');
+        // --- FINE MODIFICA ---
     };
 
     loginBtn.addEventListener("click", (e) => {
         e.preventDefault(); // Previeni comportamento link se fossero <a>
         if (router) {
-            router.navigate('/login');
+            router.navigate('/login'); //
         } else {
             showLogin();
         }
@@ -49,13 +63,13 @@ export function logView(container, initialTab = 'login', router) {
     registerBtn.addEventListener("click", (e) => {
         e.preventDefault();
         if (router) {
-            router.navigate('/register');
+            router.navigate('/register'); //
         } else {
             showRegister();
         }
     });
 
-    // Mostra il tab iniziale
+    // Mostra il tab iniziale (questo applicherà i colori corretti all'avvio)
     if (initialTab === 'register') {
         showRegister();
     } else {
